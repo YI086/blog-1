@@ -1,17 +1,19 @@
 ---
 title: GitHub PagesとHugoでブログをつくった①
 date: 2019-08-07T23:20:05+09:00
-draft: true
+draft: false
+tags: ["作業ログ"]
 ---
 
 ## ブログをつくった
 ブログをつくった.  
 特に大きな目的があるわけではないがアウトプットの練習に使ったりうちのかわいいネッコについて書いたりしたい.  
 
----
+<!--more-->
 
 ## GitHub PagesとHugoでブログをつくった
 さっそくアウトプットの練習として今回ブログを作った手順を書いていく.  
+
 
 ### つかうもの
 - MacBook Pro (Retina, 15-inch, Mid 2015)
@@ -238,7 +240,10 @@ git commit -m "$msg"
 # Push source and build repos.
 git push origin master
 ```
-`deploy.sh`がやってることの要約
+
+`deploy.sh`がやってること:
+
+
  - hugoコマンドでblogディレクトリの内容を元に静的ページをビルド
  - public内に生成されたファイルをまとめてuzimihsr.github.ioリポジトリにpush
 

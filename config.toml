@@ -1,6 +1,6 @@
 baseurl = "https://uzimihsr.github.io"
-DefaultContentLanguage = "en"
-#DefaultContentLanguage = "ja"
+#DefaultContentLanguage = "en"
+DefaultContentLanguage = "ja"
 title = "meow.md"
 theme = "beautifulhugo"
 metaDataFormat = "yaml"
