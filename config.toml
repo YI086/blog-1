@@ -1,6 +1,5 @@
 baseurl = "https://uzimihsr.github.io"
-#DefaultContentLanguage = "en"
-DefaultContentLanguage = "ja"
+DefaultContentLanguage = "en"
 title = "meow.md"
 theme = "beautifulhugo"
 metaDataFormat = "yaml"
@@ -8,105 +7,39 @@ pygmentsStyle = "trac"
 pygmentsUseClasses = true
 pygmentsCodeFences = true
 pygmentsCodefencesGuessSyntax = true
-#pygmentsUseClassic = true
-#pygmentOptions = "linenos=inline"
-#disqusShortname = "XXX"
-#googleAnalytics = "XXX"
+author = false
 
 [Params]
-#  homeTitle = "Beautiful Hugo Theme" # Set a different text for the header on the home page
   subtitle = "にゃーん"
-  logo = "img/avatar-icon.png" # Expecting square dimensions
+  logo = "/images/sotochan.jpg" # Expecting square dimensions
   favicon = "img/favicon.ico"
   dateFormat = "January 2, 2006"
   commit = false
-  #rss = true
+  rss = false
   comments = true
-  readingTime = true
-  wordCount = true
+  readingTime = false
+  wordCount = false
   useHLJS = true
   socialShare = true
   delayDisqus = true
   showRelatedPosts = true
-#  gcse = "012345678901234567890:abcdefghijk" # Get your code from google.com/cse. Make sure to go to "Look and Feel" and change Layout to "Full Width" and Theme to "Classic"
-
-#[[Params.bigimg]]
-#  src = "img/triangle.jpg"
-#  desc = "Triangle"
-#[[Params.bigimg]]
-#  src = "img/sphere.jpg"
-#  desc = "Sphere"
-#  # position: see values of CSS background-position.
-#  position = "center top"
-#[[Params.bigimg]]
-#  src = "img/hexagon.jpg"
-#  desc = "Hexagon"
 
 [Author]
   name = "uzimihsr"
-  #website = "yourwebsite.com"
-  email = "uzimihsr@domain.com"
-  #facebook = "uzimihsr"
-  #googleplus = "+uzimihsr" # or xxxxxxxxxxxxxxxxxxxxx
   github = "uzimihsr"
-  #gitlab = "uzimihsr"
-  #bitbucket = "uzimihsr"
   twitter = "uzimihsr"
-  #reddit = "uzimihsr"
-  #linkedin = "uzimihsr"
-  #xing = "uzimihsr"
-  #stackoverflow = "users/XXXXXXX/uzimihsr"
-  #snapchat = "uzimihsr"
-  #instagram = "uzimihsr"
-  #youtube = "user/uzimihsr" # or channel/channelname
-  #soundcloud = "uzimihsr"
-  #spotify = "uzimihsr"
-  #bandcamp = "uzimihsr"
-  #itchio = "uzimihsr"
-  #vk = "uzimihsr"
-  #paypal = "uzimihsr"
-  #telegram = "uzimihsr"
-  #500px = "uzimihsr"
 
 [[menu.main]]
-    name = "Blog"
-    url = ""
-    weight = 1
+  name = "Blog"
+  url = ""
+  weight = 1
 
 [[menu.main]]
-    name = "Tags"
-    url = "tags"
-    weight = 2
+  name = "Tags"
+  url = "tags"
+  weight = 2
 
 [[menu.main]]
-    name = "About"
-    url = "page/about/"
-    weight = 3
-
-# [[menu.main]]
-#     identifier = "samples"
-#     name = "Samples"
-#     weight = 4
-#
-# [[menu.main]]
-#     parent = "samples"
-#     name = "Big Image Sample"
-#     url = "post/2017-03-07-bigimg-sample"
-#     weight = 1
-#
-# [[menu.main]]
-#     parent = "samples"
-#     name = "Math Sample"
-#     url = "post/2017-03-05-math-sample"
-#     weight = 2
-#
-# [[menu.main]]
-#     parent = "samples"
-#     name = "Code Sample"
-#     url = "post/2016-03-08-code-sample"
-#     weight = 3
-
-# [[menu.main]]
-#     name = "Tags"
-#     url = "tags"
-#     weight = 3
+  name = "About"
+  url = "page/about/"
+  weight = 3

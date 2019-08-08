@@ -1,88 +1,116 @@
 ---
-title: GitHub PagesとHugoでブログをつくった①
+title: GitHub PagesとHugoでブログをつくった
 date: 2019-08-07T23:20:05+09:00
 draft: false
 tags: ["作業ログ"]
 ---
 
-## ブログをつくった
+# ブログをつくった
 ブログをつくった.  
-特に大きな目的があるわけではないがアウトプットの練習に使ったりうちのかわいいネッコについて書いたりしたい.  
+特に大きな目的があるわけではないが学んだことのアウトプットに使ったりうちのかわいいネッコについて書いたり趣味について書いたりしたい.  
+つまりなんでも書き残したい.  
 
 <!--more-->
+---
 
-## GitHub PagesとHugoでブログをつくった
+# GitHub PagesとHugoでブログをつくった
 さっそくアウトプットの練習として今回ブログを作った手順を書いていく.  
+突然記憶喪失になったときのためになるべくわかりやすく書きたい.  
 
+## なんでGitHub Pages?
+無料だし, エンジニアっぽくてかっこいいから(偏見).  
 
-### つかうもの
+## なんでHugo?
+参考になる記事が多めだったから.  
+あと人気っぽかったから.  
+
+## つかうもの
 - MacBook Pro (Retina, 15-inch, Mid 2015)
     - macOS Mojave 10.14
-- テキストエディタ(何でも良い, 今回はVimを使った)
-- 多少のgit知識
-
-
-### 前提条件
-- `brew`がインストールされていること
+- brew(Homebrew 2.1.9)
     - [homebrew](https://brew.sh/)
-- GitHubのアカウントがあること
+- GitHubのアカウント(uzimihsr)
     - [GitHub](https://github.com/)
+- Hugo v0.56.3 (後でインストールする)
+    - [Hugo](https://gohugo.io/)
+- git version 2.17.2
+- テキストエディタ(何でも良い, 今回はVimを使った)
+- ちょっとだけGitの操作
+- そこそこターミナルの操作
 
-### 参考にしたもの
-- [GitHub Pagesの作り方](https://pages.github.com/)
-- [Hugoクイックスタート](https://gohugo.io/getting-started/quick-start/)
-- [HugoでつくったページをGitHub Pagesに置く](https://gohugo.io/hosting-and-deployment/hosting-on-github/)
+## 参考にしたもの
+- [GitHub Pages](https://pages.github.com/)
+- [Hugo quick start](https://gohugo.io/getting-started/quick-start/)
+- [Hugo hosting on GitHub](https://gohugo.io/hosting-and-deployment/hosting-on-github/)
 
-### やったこと
+## ブログを作るまでの手順
+- GitHub repositoryを作成
+- Hugoでページを作成する
+- GitHub Pagesでページを公開する
+- 記事を追加する
+- サンプルページから脱却する
 
-#### GitHub repositoryを作成
-https://github.com/new  
-で, 新たに`blog`という名前のリポジトリを作成する.  
+### GitHub repositoryを作成
+[GitHub](https://github.com/new)で新たに`blog`という名前のリポジトリを作成する.  
 このrepoはHugoのプロジェクトを置くのに使う.  
-[uzimihsr/blog.git](https://github.com/uzimihsr/blog.git)
+今回作った例 : [uzimihsr/blog.git](https://github.com/uzimihsr/blog.git)
 
 同様に, `username.github.io`リポジトリを作成する.  
-`username`はアカウント名で置き換える. 例 : `uzimihsr.github.io`  
+`username`はアカウント名で置き換える.  
 ここに配置したファイルがGitHub Pagesとして公開される.  
-[uzimihsr/uzimihsr.github.io](https://github.com/uzimihsr/uzimihsr.github.io.git)
+例 : [uzimihsr/uzimihsr.github.io](https://github.com/uzimihsr/uzimihsr.github.io.git)  
 
-#### Hugoでページを作成する
-以下, ターミナルで操作
+以上2つのリポジトリを使ってブログページを作っていく.  
+
+### Hugoでページを作成する
+Hugoをインストールして, サンプルページを作ってみる.  
+以下, ターミナルで操作する.  
+<br>
+まずはHugoをインストール.
 ```
-# 適当な作業用ディレクトリに移動(自分の場合はWorkspaceを使う)
-$ cd ~/Workspace
-
-# Hugoをインストール
 $ brew install hugo
-
-# Hugoで新規プロジェクトを生成
-# Workspace/blogが生成される
+```
+<br>
+適当な作業用ディレクトリに移動(自分の場合は~/Workspaceを使う),  
+hugoで新規プロジェクトを作成する.  
+`Workspace/blog`ディレクトリが作成される.
+```
+$ cd ~/Workspace
+$ brew install hugo
 $ hugo new site blog
 $ cd blog
-
-# Hugo Themeを追加
-# 今回はBeautiful Hugo(https://themes.gohugo.io/beautifulhugo/)を使用
+```
+<br>
+Theme(いい感じのテンプレートみたいなもん)をインストールする.  
+Themeの一覧は[ここ](https://themes.gohugo.io/)で見られるが, [Beautiful Hugo](https://themes.gohugo.io/beautifulhugo/)が良さそうなのでこれを使う.  
+`git submodule add`で`themes/beautifulhugo`にBeautiful Hugoのリポジトリを追加する.  
+他のThemeでもたぶん同じような操作でいけるはず.  
+```
 $ git init
 $ git submodule add https://github.com/halogenica/beautifulhugo.git themes/beautifulhugo
-
-# Beautiful HugoのexampleSiteを利用する
+```
+<br>
+Beautiful Hugoは親切なのでサンプルページ(exampleSite)を用意してくれている.  
+今回はそのまま使うので全部`blog`直下にコピーする.  
+コピーできたら, 早速ローカルで確認するためにhugo serverを立ち上げる.  
+http://localhost:1313/ をブラウザで開くとexampleSiteのページが確認できる. 便利.  
+だいたいわかったらCtrl+Cでhugo serverを止める.
+```
 $ cp -r themes/beautifulhugo/exampleSite/* .
-
-# ページを生成し, ローカルで立ち上げる
-# http://localhost:1313/ をブラウザで開くとexampleSiteのページが確認できる.
-# だいたいわかったらCtrl+Cでhugo serverを止める.
 $ hugo server -D
-
-# ビルド前にconfigを自分用に編集しておく.
-# 基本はusernameとなっている部分をアカウント名に変えれば良い.
+```
+<br>
+次はいよいよ実際にページをビルドしてGitHub Pagesに公開する.  
+が, その前に設定ファイルをいじっておく.  
+`config.toml`に指定した情報をThemeが読み込んでいい感じのページを生成してくれているらしいので, 自分用にいろいろ変更する.  
+```
 $ vim config.toml
 ```
-
-`config.toml`
+<br>
+`config.toml`  
 ```
 baseurl = "https://uzimihsr.github.io"
 DefaultContentLanguage = "en"
-#DefaultContentLanguage = "ja"
 title = "meow.md"
 theme = "beautifulhugo"
 metaDataFormat = "yaml"
@@ -90,128 +118,62 @@ pygmentsStyle = "trac"
 pygmentsUseClasses = true
 pygmentsCodeFences = true
 pygmentsCodefencesGuessSyntax = true
-#pygmentsUseClassic = true
-#pygmentOptions = "linenos=inline"
-#disqusShortname = "XXX"
-#googleAnalytics = "XXX"
+author = false
 
 [Params]
-#  homeTitle = "Beautiful Hugo Theme" # Set a different text for the header on the home page
   subtitle = "にゃーん"
   logo = "img/avatar-icon.png" # Expecting square dimensions
   favicon = "img/favicon.ico"
   dateFormat = "January 2, 2006"
   commit = false
-  #rss = true
+  rss = false
   comments = true
-  readingTime = true
-  wordCount = true
+  readingTime = false
+  wordCount = false
   useHLJS = true
   socialShare = true
   delayDisqus = true
   showRelatedPosts = true
-#  gcse = "012345678901234567890:abcdefghijk" # Get your code from google.com/cse. Make sure to go to "Look and Feel" and change Layout to "Full Width" and Theme to "Classic"
-
-#[[Params.bigimg]]
-#  src = "img/triangle.jpg"
-#  desc = "Triangle"
-#[[Params.bigimg]]
-#  src = "img/sphere.jpg"
-#  desc = "Sphere"
-#  # position: see values of CSS background-position.
-#  position = "center top"
-#[[Params.bigimg]]
-#  src = "img/hexagon.jpg"
-#  desc = "Hexagon"
 
 [Author]
   name = "uzimihsr"
-  #website = "yourwebsite.com"
-  email = "uzimihsr@domain.com"
-  #facebook = "uzimihsr"
-  #googleplus = "+uzimihsr" # or xxxxxxxxxxxxxxxxxxxxx
   github = "uzimihsr"
-  #gitlab = "uzimihsr"
-  #bitbucket = "uzimihsr"
   twitter = "uzimihsr"
-  #reddit = "uzimihsr"
-  #linkedin = "uzimihsr"
-  #xing = "uzimihsr"
-  #stackoverflow = "users/XXXXXXX/uzimihsr"
-  #snapchat = "uzimihsr"
-  #instagram = "uzimihsr"
-  #youtube = "user/uzimihsr" # or channel/channelname
-  #soundcloud = "uzimihsr"
-  #spotify = "uzimihsr"
-  #bandcamp = "uzimihsr"
-  #itchio = "uzimihsr"
-  #vk = "uzimihsr"
-  #paypal = "uzimihsr"
-  #telegram = "uzimihsr"
-  #500px = "uzimihsr"
 
 [[menu.main]]
-    name = "Blog"
-    url = ""
-    weight = 1
+  name = "Blog"
+  url = ""
+  weight = 1
 
 [[menu.main]]
-    name = "Tags"
-    url = "tags"
-    weight = 2
+  name = "Tags"
+  url = "tags"
+  weight = 2
 
 [[menu.main]]
-    name = "About"
-    url = "page/about/"
-    weight = 3
-
-# [[menu.main]]
-#     identifier = "samples"
-#     name = "Samples"
-#     weight = 4
-#
-# [[menu.main]]
-#     parent = "samples"
-#     name = "Big Image Sample"
-#     url = "post/2017-03-07-bigimg-sample"
-#     weight = 1
-#
-# [[menu.main]]
-#     parent = "samples"
-#     name = "Math Sample"
-#     url = "post/2017-03-05-math-sample"
-#     weight = 2
-#
-# [[menu.main]]
-#     parent = "samples"
-#     name = "Code Sample"
-#     url = "post/2016-03-08-code-sample"
-#     weight = 3
-
-# [[menu.main]]
-#     name = "Tags"
-#     url = "tags"
-#     weight = 3
-
+  name = "About"
+  url = "page/about/"
+  weight = 3
 ```
-
-#### GitHub Pagesで公開する
-そのままblogディレクトリで操作.
+<br>
+### GitHub Pagesでページを公開する
+ローカルの`blog`ディレクトリにリモートの`blog`リポジトリを紐付け,  
+さらに`blog/public`ディレクトリに`uzimihsr.github.io`を紐付ける.  
+Hugoでページをビルドすると`blog/public`ディレクトリに必要なファイルが吐き出されるので,  
+これを`uzimihsr.github.io`にpushすることでGitHub Pagesが更新されていく.  
 ```
-# 作成したリモートリポジトリを紐付ける
 $ git remote add origin https://github.com/uzimihsr/blog.git
 $ git submodule add -b master https://github.com/uzimihsr/uzimihsr.github.io.git public
-
-# 自動で更新できるようにスクリプトを生成
+```
+<br>
+いろいろごちゃごちゃしてきたので, かんたんに記事を更新できるようにスクリプト`deploy.sh`を書く.  
+このスクリプトはhugoコマンドでblogディレクトリの内容を元に静的ページをビルドし,  
+`blog/public`内に生成されたファイルをまとめて`uzimihsr.github.io`リポジトリにpushしてくれる.  
+```
 $ vim deploy.sh
 $ chmod +x deploy.sh
-
-# スクリプトを使ってサイトを更新
-# https://uzimihsr.github.io をブラウザで開くとローカルで確認したものと同じページが確認できる.
-# 更新にすこし時間がかかるかもしれない.
-$ ./deploy.sh "Initial commit"
 ```
-
+<br>
 `deploy.sh`
 ```
 #!/bin/sh
@@ -240,24 +202,65 @@ git commit -m "$msg"
 # Push source and build repos.
 git push origin master
 ```
-
-`deploy.sh`がやってること:
-
-
- - hugoコマンドでblogディレクトリの内容を元に静的ページをビルド
- - public内に生成されたファイルをまとめてuzimihsr.github.ioリポジトリにpush
-
-#### 記事を追加する
+<br>
+作成したスクリプトを使ってページをビルドし, GitHub Pagesにpushする.  
+すなわち, ブログを公開する. 更新されるのに少し時間がかかるが,  
+https://uzimihsr.github.io をブラウザで開くとローカルで確認したものと同じページが確認できる.
 ```
-# 新しい記事を追加する
+$ ./deploy.sh "Initial commit"
+```
+<br>
+### 記事を追加する
+せっかくなので新しく記事を追加する.  
+`blog/content/post`にMarkdownが追加されるので, これをいい感じに編集する.  
+一番上のテーブルにある`draft: false`(下書き設定)を`draft: true`に変えると記事が公開される.  
+記事を更新したら, スクリプトを使って更新した情報をGitHub Pagesに反映させる.  
+```
 $ hugo new post/2019-08-07-create-blog-1.md
-
-# 記事を編集する
 $ vim content/post/2019-08-07-create-blog-1.md
-
-# ブログを更新する
 $ ./deploy.sh "2019-08-07-create-blog-1.md"
 ```
+<br>
 
-以上, ブログを作って記事を追加するところまでやった.  
-このままだとほとんどexampleSiteのままなので自分用にいろいろ調整していきたい.
+### サンプルページから脱却する
+サンプルページのままだといらない記事があるので, 下書き設定(`draft: false`)に変更する.
+```
+$ vim content/post/2015-01-04-first-post.md # 他の記事に対しても同様
+$ ./deploy.sh "サンプル記事を非公開にした"
+```
+<br>
+
+また, 日本語のフォントが気に食わないので`blog/themes/beautifulhugo/static/css/main.css`をいじる.  
+`font-family: 'Lora', 'Times New Roman', serif;`となっている行を  
+`font-family: 'arial', sans-serif;`に変更する.
+```
+$ vim themes/beautifulhugo/static/css/main.css
+$ ./deploy.sh "フォントを変更した"
+```
+注意すべきなのは, submoduleを編集しているためにこの変更をgitで管理できないこと.  
+少し気持ち悪いので本当はBeautiful HugoをForkしてくるべき. あとで気が向いたらやる.
+<br>
+
+アイコンも自分用に変更する.  
+`blog/static/images/`に`sotochan.jpg`を配置して,  
+`config.toml`の`logo = "img/avatar-icon.png"`となっている部分を  
+`logo = "/images/sotochan.jpg"`に書き換える.  
+```
+$ mkdir static/images
+$ cp ~/Desktop/sotochan.jpg static/images
+$ vim config.toml
+$ ./deploy.sh "アイコンを変更した"
+```
+<br>
+
+トップページとaboutページを編集する.  
+特にトップページに表示したいものも無いので`content/_index.md`を削除する.  
+また, `content/page/about.md`を好きに編集する.  
+```
+$ rm content/_index.md
+$ vim content/page/about.md
+```
+<br>
+
+以上でだいたいブログのセットアップは完了.  
+あとは3日坊主にならないよう頻繁に書いていきたい.
