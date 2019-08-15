@@ -1,15 +1,15 @@
 ---
-title: "Rasberry PiにgoenvでGoの環境構築をした"
+title: "Raspberry PiにgoenvでGoの環境構築をした"
 date: 2019-08-15T22:09:21+09:00
 draft: false
-tags: ["作業ログ", "Raspberry Pi"]
+tags: ["作業ログ", "Raspberry Pi", "Go"]
 ---
 
 # Goに触りたい, だけどMacがない
-Go(golang)を勉強したい. 
-しかし先日愛用していたMacが[バッテリー自主回収プログラム](https://support.apple.com/ja-jp/15-inch-macbook-pro-battery-recall)に旅立ってしまったので当分帰ってこない...
+Go(golang)を勉強したい.  
+しかし先日愛用していたMacが[バッテリー自主回収プログラム](https://support.apple.com/ja-jp/15-inch-macbook-pro-battery-recall)に旅立ってしまったので当分帰ってこない...  
 仕方がないので, だいぶ前に買って家に転がっていたラズパイを使ってGoを動かせるようにしてみた.  
-需要が無いと思うが一応作業メモとして残す.  
+需要は無いと思うが一応作業ログとして残しておく.  
 
 
 <!--more-->
@@ -64,7 +64,8 @@ $ exec $SHELL
 
 `exec $SHELL`が問題なく動けばgoenvを使う準備は完了.  
 
-`.zshenv`
+<details><summary>`.zshenv`</summary><div>
+
 ```
 #
 # Defines environment variables.
@@ -77,6 +78,7 @@ export PATH="$GOENV_ROOT/bin:$PATH"
 eval "$(goenv init -)"
 export PATH="$GOPATH/bin:$PATH"
 ```
+</div></details>
 
 ### Goのインストール
 さっそくgoenvをつかって使用可能なGoのバージョン一覧を取得し, 最新の`1.12.7`をインストールした.  
@@ -118,7 +120,8 @@ $ go run hello.go
 
 できた.  
 
-`hello.go`
+<details><summary>`hello.go`</summary><div>
+
 ```
 package main
 
@@ -131,6 +134,7 @@ func main() {
     fmt.Println("from go(goenv) on Raspberry Pi")
 }
 ```
+</div></details>
 
 ## おまけ
 作業中ずっと邪魔してきたねこ  
