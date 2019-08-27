@@ -8,6 +8,7 @@ pygmentsUseClasses = true
 pygmentsCodeFences = true
 pygmentsCodefencesGuessSyntax = true
 author = false
+googleAnalytics = "UA-146479727-1"
 
 [Params]
   subtitle = "にゃーん"

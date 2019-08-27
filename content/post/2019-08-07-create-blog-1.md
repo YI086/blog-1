@@ -2,7 +2,7 @@
 title: GitHub PagesとHugoでブログをつくった
 date: 2019-08-07T23:20:05+09:00
 draft: false
-tags: ["作業ログ"]
+tags: ["作業ログ", "Hugo"]
 ---
 
 # ブログをつくった
