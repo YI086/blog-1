@@ -54,7 +54,6 @@ $ git clone https://github.com/syndbg/goenv.git ~/.goenv
 次にgoenvを使うために必要な環境変数を設定ファイルに追加していく.  
 今回はzshを使っているので`.zshenv`に書いていく.  
 ```
-$ echo 'export GOPATH="$HOME/go"' >> ~/.zshenv
 $ echo 'export GOENV_ROOT="$HOME/.goenv"' >> ~/.zshenv
 $ echo 'export PATH="$GOENV_ROOT/bin:$PATH"' >> ~/.zshenv
 $ echo 'eval "$(goenv init -)"' >> ~/.zshenv
