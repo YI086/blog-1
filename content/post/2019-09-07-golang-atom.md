@@ -69,7 +69,7 @@ $ go get -u golang.org/x/tools/cmd/guru
 $ go get -u github.com/fatih/gomodifytags
 $ go get -u github.com/tpng/gopkgs
 $ go get -u github.com/ramya-rao-a/go-outline
-$ apm install script
+$ apm install go-plus
 ```
 
 ### go-debugのインストール
