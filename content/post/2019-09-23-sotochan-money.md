@@ -1,7 +1,7 @@
 ---
 title: "そとちゃんと初期費用"
 date: 2019-09-23T15:05:07+09:00
-draft: true
+draft: false
 tags: ["ねこ", "そとちゃん"]
 ---
 
