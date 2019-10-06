@@ -15,7 +15,7 @@ tags: ["作業ログ", "Go"]
 Goの練習として, コマンドラインで動くかんたんなサイコロを作ってみた.  
 
 動作のイメージ :
-```
+```bash
 $ dice # 1~6の範囲でランダムに生成された整数を1つ出力
 3
 
@@ -43,7 +43,7 @@ $ dice -f 10 -d 2 # -fオプションと-dオプションの併用も可能
 ### dice.goの作成
 とりあえず標準パッケージを使って作ってみた.  
 
-```
+```bash
 $ mkdir -p $GOPATH/src/github.com/uzimihsr/dice
 $ cd $GOPATH/src/github.com/uzimihsr/dice
 $ vim dice.go
@@ -51,7 +51,7 @@ $ vim dice.go
 
 <details><summary>`dice.go`</summary><div>
 
-```
+```go
 package main
 
 import (
@@ -93,7 +93,7 @@ Goでコマンドラインツールを作る場合には[urfave/cli](https://git
 ### dice.goをインストール
 `go install`を使ってdice.goの実行ファイルを`$GOPATH/bin`にインストールする.  
 
-```
+```bash
 $ cd $GOPATH/src/github.com/uzimihsr/dice
 $ go install
 $ which dice

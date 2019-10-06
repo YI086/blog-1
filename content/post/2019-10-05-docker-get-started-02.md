@@ -60,7 +60,7 @@ Pythonでのアプリ開発を例に通常のマシンとDockerでの開発を�
 ### Dockerfile
 実際にDockerfileを書いてみる.  
 適当なディレクトリで, `Dockerfile`という名前のファイルを以下の内容で作成する.  
-```
+```bash
 $ mkdir workspace
 $ cd workspace
 $ vim Dockerfile
@@ -68,7 +68,7 @@ $ vim Dockerfile
 
 <details><summary>`Dockerfile`</summary><div>
 
-```
+```docker
 # FROM : 親イメージの指定を行う.
 # pythonの公式イメージをこれからつくるイメージの親イメージとして使用する
 FROM python:2.7-slim
@@ -115,7 +115,7 @@ CMD ["python", "app.py"]
 
 ## 今回作るアプリ
 `Dockerfile`内で使用する`requirements.txt`と`app.py`を作成する.  
-```
+```bash
 $ pwd
 /path/to/workspace
 $ vim requirements.txt
@@ -135,7 +135,7 @@ Redis
 
 <details><summary>`app.py`</summary><div>
 
-```
+```python
 from flask import Flask
 from redis import Redis, RedisError
 import os
@@ -181,7 +181,7 @@ if __name__ == "__main__":
 ## アプリのビルド
 アプリに必要なものは全て準備できたので, さっそくビルドする.  
 まずは現在のディレクトリに`Dockerfile`, `app.py`, `requirements.txt`があることを確認する.  
-```
+```bash
 $ pwd
 /path/to/workspace
 $ ls
@@ -192,7 +192,7 @@ Dockerfile       app.py           requirements.txt
 (`tag`を指定しない場合は自動的に`latest`が付与される. 今はそんなに重要じゃない.)  
 最後の`.`は現在のディレクトリにある`Dockerfile`を使用することを示す.  
 今回はfriendlyhelloというリポジトリ名でイメージをビルドする.  
-```
+```bash
 $ docker build -t friendlyhello .
 ```
 
@@ -200,7 +200,7 @@ $ docker build -t friendlyhello .
 
 <details><summary>ビルド時のログ</summary><div>
 
-```
+```bash
 $ docker build -t friendlyhello .
 Sending build context to Docker daemon   5.12kB
 Step 1/7 : FROM python:2.7-slim
@@ -259,7 +259,7 @@ Successfully tagged friendlyhello:latest
 
 ビルドしたイメージを確認する.  
 `docker image ls`コマンドでローカルマシンにあるイメージの一覧が取得できる.  
-```
+```bash
 $ docker image ls
 REPOSITORY      TAG       IMAGE ID        CREATED         SIZE
 friendlyhello   latest    c807461f0dca    9 minutes ago   148MB
@@ -270,7 +270,7 @@ friendlyhello   latest    c807461f0dca    9 minutes ago   148MB
 `docker run`コマンドで使用するイメージを指定するとコンテナが立ち上がる.  
 `-p localport:containerport`オプションでコンテナを起動するローカルマシンのポート(localport)をコンテナのポート(containerport)に割り当てることができる.  
 今回はローカルマシンの4000番ポートを起動するコンテナの80番ポートに割り当てる.  
-```
+```bash
 $ docker run -p 4000:80 friendlyhello
 * Serving Flask app "app" (lazy loading)
 * Environment: production
@@ -289,18 +289,18 @@ Flaskのログが表示され, `http://0.0.0.0:80/`にアクセスするよう�
 
 一旦`Ctrl+C`でコンテナを停止し, 今度は`-d`オプションをつけてバックグラウンドでコンテナを起動する.  
 この起動方法をデタッチドモードと言う.  
-```
+```bash
 $ docker run -d -p 4000:80 friendlyhello
 ```
 先程はブラウザで開いたので, 今度は`curl`コマンドで動作確認する.  
-```
+```bash
 $ curl http://localhost:4000
 <h3>Hello World!</h3><b>Hostname:</b> xxxxxxxxxxxx<br/><b>Visits:</b> <i>cannot connect to Redis, counter disabled</i>
 ```
 ブラウザのときと同じHTTPレスポンスが返ってくることがわかる.  
 
 また, 起動中のコンテナ一覧を`docker container ls`コマンドで確認できる.  
-```
+```bash
 $ docker container ls
 CONTAINER ID    IMAGE           COMMAND           CREATED           STATUS          PORTS                   NAMES
 cc47aa120f15    friendlyhello   "python app.py"   58 seconds ago    Up 57 seconds   0.0.0.0:4000->80/tcp    zen_liskov
@@ -308,7 +308,7 @@ cc47aa120f15    friendlyhello   "python app.py"   58 seconds ago    Up 57 second
 今度は起動中のコンテナを停止してみる.  
 コンテナの停止には`docker container stop`コマンドを使用する.  
 停止するコンテナは`CONTAINER ID`で指定する.  
-```
+```bash
 $ docker container stop cc47aa120f15
 ```
 
@@ -322,7 +322,7 @@ $ docker container stop cc47aa120f15
 ### Docker IDでログインする
 事前に[hub.docker.com](https://hub.docker.com/)でアカウントを作成しておく.  
 ローカルマシンからDocker Hubにログインするには`docker login`コマンドを使用する.  
-```
+```bash
 $ docker login
 ```
 
@@ -332,11 +332,11 @@ Dockerイメージにはタグで意味のあるバージョン名または番�
 イメージをアップロードする前にはタグをつけ直す必要がある.  
 タグの付与には`docker tag`コマンドを使用する.  
 今回は作成したfriendlyhelloイメージに`uzimihsr/get-started:part2`という名前をつける.  
-```
+```bash
 $ docker tag friendlyhello uzimihsr/get-started:part2
 ```
 イメージ一覧を表示すると, 先程まで使用していたfriendlyhelloと同じイメージIDのuzimihsr/get-startedが作成されている.  
-```
+```bash
 $ docker image ls
 REPOSITORY              TAG       IMAGE ID        CREATED             SIZE
 friendlyhello           latest    c807461f0dca    About an hour ago   148MB
@@ -346,7 +346,7 @@ uzimihsr/get-started    part2     c807461f0dca    About an hour ago   148MB
 ### イメージを公開する
 タグ付けしたイメージは`docker push`コマンドでアップロードできる.  
 先程タグを付け直したuzimihsr/get-startedをアップロードする.  
-```
+```bash
 $ docker push uzimihsr/get-started:part2
 ```
 
@@ -361,7 +361,7 @@ Docker Hubにイメージの公開ができたので, 試しに公開したイ�
 削除するコンテナのIDを指定するか, `$(docker container ls -a -q)`を指定すると全てのコンテナを削除してくれる.  
 同様にイメージの削除には`docker image rm`コマンドを使用する.  
 今回はコンテナを全削除し, 作成したイメージを削除する.  
-```
+```bash
 $ docker container rm $(docker container ls -a -q)
 $ docker container ls
 CONTAINER ID    IMAGE   COMMAND   CREATED   STATUS    PORTS   NAMES
@@ -371,7 +371,7 @@ REPOSITORY    TAG   IMAGE ID    CREATED   SIZE
 ```
 Docker Hubにあるイメージを指定してコンテナを起動させる.  
 [Part1](https://uzimihsr.github.io/post/2019-10-03-docker-get-started-01/)で[hello-world](https://hub.docker.com/_/hello-world/)を起動したときと同様に, イメージが手元に無いので自動でダウンロードしてくる.  
-```
+```bash
 $ docker run -p 4000:80 uzimihsr/get-started:part2
 Unable to find image 'uzimihsr/get-started:part2' locally
 part2: Pulling from uzimihsr/get-started
@@ -405,5 +405,5 @@ Dockerfileのあたりはイメージの根幹を成す部分なのでかなり�
 
 がわかればこのパートは十分だと思う.  
 
-次は[Get Started, Part 3: Services](https://docs.docker.com/get-started/part3/)を読みたい.
+次は[Get Started, Part 3: Services](https://docs.docker.com/get-started/part3/)を読みたい.  
 (追記)[読んだ](https://uzimihsr.github.io/post/2019-10-06-docker-get-started-03/)

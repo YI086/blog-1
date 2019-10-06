@@ -57,7 +57,7 @@ $ vim docker-compose.yml
 
 <details><summary>`docker-compose.yml`</summary><div>
 
-```
+```yaml
 version: "3"
 services:
   # webという名前のサービスを定義
@@ -107,14 +107,14 @@ networks:
 ## ロードバランスしたアプリを動かす
 `docker-compose.yml`の内容を実行するため, まずはswarmクラスタを初期化する.  
 swarmについては[Part 4](https://docs.docker.com/get-started/part4/)で説明するので, 今はおまじないだと思って大丈夫.  
-```
+```bash
 $ docker swarm init
 Swarm initialized: current node (hw3rcr1q9vlpp3qgfw959knwb) is now a manager.
 ```
 それでは`docker stack deploy`コマンドを使用して実際にアプリを立ち上げる.  
 `-c FILE_PATH`オプションで使用する`docker-compose.yml`へのパスを指定できる.  
 今回は現在のディレクトリにある`docker-compose.yml`を指定して, getstartedlabという名前のアプリ(スタック)を起動する.  
-```
+```bash
 $ ls
 docker-compose.yml
 $ docker stack deploy -c docker-compose.yml getstartedlab
@@ -124,7 +124,7 @@ Creating service getstartedlab_web
 実際に起動したサービスの一覧は`docker service ls`で確認できる.  
 または, `docker stack services getstartedlab`でもgetstartedlabスタックに関連するサービスの一覧が表示される.  
 今回はgetstartedlabスタックの中でgetstartedlab_webというサービスが作成されていることが確認できる.  
-```
+```bash
 $ docker service ls
 ID              NAME                MODE          REPLICAS     IMAGE                         PORTS
 bggiqgkl98zv    getstartedlab_web   replicated    5/5          uzimihsr/get-started:part2    *:4000->80/tcp
@@ -136,7 +136,7 @@ bggiqgkl98zv    getstartedlab_web   replicated    5/5          uzimihsr/get-star
 今回は`docker service ps`コマンドでgetstartedlab_webサービスのタスクを確認する.  
 または, 他のコンテナが何も起動していない場合に限り`docker container ls -q`コマンドでコンテナIDの一覧を取得することができる.  
 (タスクのIDとは違うことに注意)
-```
+```bash
 $ docker service ps getstartedlab_web
 ID                  NAME                  IMAGE                        NODE                DESIRED STATE       CURRENT STATE           ERROR               PORTS
 p8z32hd4620k        getstartedlab_web.1   uzimihsr/get-started:part2   docker-desktop      Running             Running 8 minutes ago
@@ -153,30 +153,24 @@ $ docker container ls -q
 ```
 ロードバランシング(負荷分散)が行われているか確認する.  
 ブラウザでも良いが, 今回はcurlで何回かURLを叩いてみる.  
-```
+```bash
 $ curl http://localhost:4000
 <h3>Hello World!</h3><b>Hostname:</b> 374fec7c58a7<br/><b>Visits:</b> <i>cannot connect to Redis, counter disabled</i>
-~/Workspace/docker-tutorial
 $ curl http://localhost:4000
 <h3>Hello World!</h3><b>Hostname:</b> 3fccce9c79e8<br/><b>Visits:</b> <i>cannot connect to Redis, counter disabled</i>
-~/Workspace/docker-tutorial
 $ curl http://localhost:4000
 <h3>Hello World!</h3><b>Hostname:</b> 0d3641cc5d70<br/><b>Visits:</b> <i>cannot connect to Redis, counter disabled</i>
-~/Workspace/docker-tutorial
 $ curl http://localhost:4000
 <h3>Hello World!</h3><b>Hostname:</b> 7ec5196a0211<br/><b>Visits:</b> <i>cannot connect to Redis, counter disabled</i>
-~/Workspace/docker-tutorial
 $ curl http://localhost:4000
 <h3>Hello World!</h3><b>Hostname:</b> 152251abda79<br/><b>Visits:</b> <i>cannot connect to Redis, counter disabled</i>
-~/Workspace/docker-tutorial
-(⎈ |docker-desktop:default)❯
 ```
 注目すべきはHostnameの部分で, アクセスする度にホストが変わっていることから負荷分散(ラウンドロビン方式)が正常に行われていることがわかる.  
 
 getstartedlabスタック内のタスクは`docker stack ps getstartedlab`で確認できるが,  
 今回はgetstartedlab_webサービスしか動いていないため,  
 先程`docker service ps`で確認したのと同じタスクの一覧が表示される.  
-```
+```bash
 $ docker stack ps getstartedlab
 ID                  NAME                  IMAGE                        NODE                DESIRED STATE       CURRENT STATE            ERROR               PORTS
 p8z32hd4620k        getstartedlab_web.1   uzimihsr/get-started:part2   docker-desktop      Running             Running 22 minutes ago
@@ -190,7 +184,7 @@ j692c5bbtilh        getstartedlab_web.5   uzimihsr/get-started:part2   docker-de
 `docker-compose.yml`の`services.web.deploy.replicas`の値を変更することでアプリのスケーリングができる.  
 以下の手順でgetstartedlabスタックを更新してみる.  
 なお, 更新前にスタックを停止したりコンテナを削除する必要はない(自動でやってくれる).  
-```
+```bash
 $ vim docker-compose.yml
 $ docker stack deploy -c docker-compose.yml getstartedlab
 Updating service getstartedlab_web (id: bggiqgkl98zvy8ayiqmwxyt79)
@@ -198,7 +192,7 @@ Updating service getstartedlab_web (id: bggiqgkl98zvy8ayiqmwxyt79)
 
 <details><summary>レプリカ数を変更した`docker-compose.yml`</summary><div>
 
-```
+```yaml
 version: "3"
 services:
   web:
@@ -215,7 +209,6 @@ services:
     ports:
       - "4000:80"
     networks:
-      う設定
       - webnet
 networks:
   webnet:
@@ -224,7 +217,7 @@ networks:
 </div></details>
 
 再びgetstartedlabスタックのタスクを確認してみると, タスクが減っている(今回は3を指定した)ことが確認できる.  
-```
+```bash
 $ docker stack ps getstartedlab
 ID                  NAME                  IMAGE                        NODE                DESIRED STATE       CURRENT STATE            ERROR               PORTS
 p8z32hd4620k        getstartedlab_web.1   uzimihsr/get-started:part2   docker-desktop      Running             Running 35 minutes ago
@@ -234,7 +227,7 @@ d5u6qaw9y74a        getstartedlab_web.3   uzimihsr/get-started:part2   docker-de
 余談だが, `docker inspect`コマンドでコンテナ(タスク)の詳細を確認することもできる.  
 <details><summary>`docker inspect`</summary><div>
 
-```
+```bash
 $ docker inspect p8z32hd4620k
 [
     {
@@ -396,14 +389,14 @@ $ docker inspect p8z32hd4620k
 
 ### アプリとswarmの停止
 アプリ(スタック)を停止するには`docker stack rm`コマンドを使用する.  
-```
+```bash
 $ docker stack rm getstartedlab
 Removing service getstartedlab_web
 Removing network getstartedlab_webnet
 ```
 また, swarmも`docker swarm leave`コマンドで停止する.  
 `--force`オプションで強制的に停止できる.  
-```
+```bash
 $ docker swarm leave --force
 Node left the swarm.
 ```

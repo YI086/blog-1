@@ -20,7 +20,7 @@ pythonの`sys.version`みたいに`Go(golang)`でもコード中でバージョ�
 
 <details><summary>`check-version.go`</summary><div>
 
-```
+```go
 package main
 
 import (
@@ -35,29 +35,24 @@ func main() {
 </div></details>
 <br>
 
-```
+```bash
 $ goenv versions
-
->1.11.13
->* 1.12.9 (set by /Users/username/.goenv/version)
+1.11.13
+* 1.12.9 (set by /Users/username/.goenv/version)
 
 $ goenv global 1.12.9 # すでに設定されてるので意味無し
 $ go version
-
->go version go1.12.9 darwin/amd64
+go version go1.12.9 darwin/amd64
 
 $ go run check-version.go
-
->Go version : go1.12.9
+Go version : go1.12.9
 
 $ goenv global 1.11.13
 $ go version
-
->go version go1.11.13 darwin/amd64
+go version go1.11.13 darwin/amd64
 
 $ go run check-version.go
-
->Go version : go1.11.13
+Go version : go1.11.13
 ```
 
 できた. サンプルコードで実行環境吐き出させるときとかにつかいたい.  

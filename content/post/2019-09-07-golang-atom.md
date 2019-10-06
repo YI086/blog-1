@@ -54,7 +54,7 @@ $ apm install script
 [go-plus](https://atom.io/packages/go-plus)  
 **本命**. AtomでGoを書くときのサポート(整形, 補完, docの簡易表示, 関数定義ファイルへのジャンプ)をだいたいやってくれる.  
 Goのパッケージをいくつか必要とするので, それらもインストールする.  
-```
+```bash
 $ go get -u golang.org/x/tools/cmd/goimports
 $ go get -u golang.org/x/tools/cmd/gorename
 $ go get -u github.com/sqs/goreturns

@@ -53,7 +53,7 @@ docker-composeとKubernetesも入っているので便利.
 
 ### Dockerのバージョン確認
 さっそくバージョン確認用のコマンドを打ってみる.  
-```
+```bash
 # 普通のアプリと同様に--versionまたは-vオプションで確認可能
 $ docker --version
 Docker version 19.03.2, build 6a30dfc
@@ -61,7 +61,7 @@ Docker version 19.03.2, build 6a30dfc
 
 <details><summary>さらに詳細な情報を表示する</summary><div>
 
-```
+```bash
 # 詳細情報を表示
 # イメージ, コンテナの数とかが表示される
 $ docker info
@@ -123,7 +123,7 @@ Server:
 
 ### Dockerの動作確認
 DockerでHello, World!する.  
-```
+```bash
 # Hello, World!を表示させるイメージを実行する
 # hello-worldという名前のイメージはまだローカルにないので, Docker Hubから自動で取ってくる.
 $ docker run hello-world
@@ -155,7 +155,7 @@ For more examples and ideas, visit:
 ```
 `Docker Hub` : いろんなイメージが共有されてるクラウドサービス, イメージ専門のGitHubみたいなもん  
 
-```
+```bash
 # 手元にあるイメージを一覧表示
 $ docker image ls
 REPOSITORY    TAG       IMAGE ID        CREATED         SIZE
