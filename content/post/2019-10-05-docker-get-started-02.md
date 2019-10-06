@@ -19,7 +19,7 @@ tags: ["Docker", "メモ"]
 このパートに入る前に以下の条件をクリアすること.  
 
 - バージョン1.13以降のDockerがインストール済みであること
-- [Part 1](https://docs.docker.com/get-started/part2/)の内容を理解していること
+- [Part 1](https://docs.docker.com/get-started/)の内容を理解していること
 - `$ docker run hello-world`が正常に動くこと
 
 ## はじめに
@@ -317,7 +317,7 @@ $ docker container stop cc47aa120f15
 レジストリとはリポジトリが集まる場所で, リポジトリとはイメージの集まりのことである.  
 レジストリの1つのアカウントは複数のリポジトリを作ることができるので,  
 感覚的にはレジストリがGitHub, リポジトリがGitHubリポジトリに似ている.  
-デフォルトでは[Docker Hub](https://hub.docker.com/)がリポジトリとして使用される.  
+デフォルトでは[Docker Hub](https://hub.docker.com/)がレジストリとして使用される.  
 
 ### Docker IDでログインする
 事前に[hub.docker.com](https://hub.docker.com/)でアカウントを作成しておく.  
@@ -406,3 +406,4 @@ Dockerfileのあたりはイメージの根幹を成す部分なのでかなり�
 がわかればこのパートは十分だと思う.  
 
 次は[Get Started, Part 3: Services](https://docs.docker.com/get-started/part3/)を読みたい.
+(追記)[読んだ](https://uzimihsr.github.io/post/2019-10-06-docker-get-started-03/)
