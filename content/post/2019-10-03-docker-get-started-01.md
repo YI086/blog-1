@@ -1,5 +1,5 @@
 ---
-title: "Dockerをおさらいする 1"
+title: "Docker Get Startedを読む Part1"
 date: 2019-10-03T23:54:16+09:00
 draft: false
 tags: ["Docker", "メモ"]
@@ -48,6 +48,7 @@ Dockerについて[Katacoda](https://www.katacoda.com/courses/docker)で一通�
 
 ## Dockerの環境構築
 自分の場合は[Docker Desktop for Mac](https://hub.docker.com/editions/community/docker-ce-desktop-mac)をインストールした.  
+簡単なので手順は割愛.  
 docker-composeとKubernetesも入っているので便利.  
 
 ### Dockerのバージョン確認
@@ -171,3 +172,4 @@ hello-world   latest    fce289e99eb9    9 months ago    1.84kB
 コンテナの特徴とかVMとの違いとか自分の中であやふやだったのでなんとなく整理できてよかった.  
 
 次は[Get Started, Part 2: Containers](https://docs.docker.com/get-started/part2/)を読みたい.  
+(追記)読んだ:[Part2](https://uzimihsr.github.io/post/2019-10-05-docker-get-started-02/)
