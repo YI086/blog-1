@@ -1,5 +1,5 @@
 ---
-title: "Docker Get Startedを読む Part1"
+title: "[Deprecated]Docker Get Startedを読む Part1"
 date: 2019-10-03T23:54:16+09:00
 draft: false
 tags: ["Docker", "メモ"]
@@ -7,6 +7,10 @@ tags: ["Docker", "メモ"]
 
 ## Dockerおさらい
 Dockerについて[Katacoda](https://www.katacoda.com/courses/docker)で一通り勉強したので, 復習も兼ねて公式ドキュメントを読んでみる.  
+
+## Deprecated
+公式の[Get Started](https://docs.docker.com/get-started/)が更新されてしまったので,  
+この記事の内容は古くなっている. 非推奨.  
 
 <!--more-->
 ---

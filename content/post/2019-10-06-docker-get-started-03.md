@@ -1,5 +1,5 @@
 ---
-title: "Docker Get Startedを読む Part3"
+title: "[Deprecated]Docker Get Startedを読む Part3"
 date: 2019-10-06T16:58:10+09:00
 draft: false
 tags: ["Docker", "メモ"]
@@ -7,6 +7,10 @@ tags: ["Docker", "メモ"]
 
 ## Dockerおさらい
 [前回](https://uzimihsr.github.io/post/2019-10-05-docker-get-started-02/)のつづき  
+
+## Deprecated
+公式の[Get Started](https://docs.docker.com/get-started/)が更新されてしまったので,  
+この記事の内容は古くなっている. 非推奨.  
 
 <!--more-->
 ---
