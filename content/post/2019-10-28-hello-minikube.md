@@ -1,7 +1,7 @@
 ---
 title: "Hello Minikubeする"
 date: 2019-10-28T21:56:44+09:00
-draft: true
+draft: false
 tags: ["Kubernetes", "作業ログ"]
 ---
 
