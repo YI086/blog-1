@@ -15,7 +15,7 @@ tags: ["Kubernetes", "メモ"]
 
 ## 読んだもの
 
-- [Kubernetes完全ガイド](https://book.impress.co.jp/books/1118101055) 4章 APIリソースとkubectl
+- [Kubernetes完全ガイド](https://book.impress.co.jp/books/1118101055) 4章(APIリソースとkubectl)
 
 重要そうなところとかよく使いそうなところだけまとめる.  
 
