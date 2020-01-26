@@ -12,8 +12,9 @@ googleAnalytics = "UA-146479727-1"
 
 [Params]
   subtitle = "にゃーん"
-  logo = "/images/sotochan.jpg" # Expecting square dimensions
-  favicon = "img/favicon.ico"
+  logo = "/images/sotochan_icon.jpg" # Expecting square dimensions
+  #favicon = "img/favicon.ico"
+  favicon = "/images/sotochan_icon.jpg"
   dateFormat = "January 2, 2006"
   commit = false
   rss = false

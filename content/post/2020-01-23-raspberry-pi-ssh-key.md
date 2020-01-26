@@ -13,21 +13,36 @@ tags: ["作業ログ", "Raspberry Pi"]
 
 ## やったことのまとめ
 
-- MacBookの公開鍵をラズパイ側に登録
-- ラズパイ側でパスワードログインを無効化
-
-ラズパイのIPは[固定済み](https://uzimihsr.github.io/post/2020-01-07-raspberry-pi-static-id/#%E3%83%A9%E3%82%BA%E3%83%91%E3%82%A4%E3%81%AEip%E3%82%A2%E3%83%89%E3%83%AC%E3%82%B9%E5%9B%BA%E5%AE%9A)  
+- MacBookの公開鍵をラズパイ側に登録してログインできるようにした
+- ラズパイ側でパスワードログインを無効化した
 
 ## つかうもの
 
 - Raspberry Pi 3 Model B+
     - SSHサーバー(入られる側)
     - OSはRaspbian(10.0)
+    - IPは[固定済み](https://uzimihsr.github.io/post/2020-01-07-raspberry-pi-static-id/#%E3%83%A9%E3%82%BA%E3%83%91%E3%82%A4%E3%81%AEip%E3%82%A2%E3%83%89%E3%83%AC%E3%82%B9%E5%9B%BA%E5%AE%9A)  
 - MacBook
     - SSHクライアント(入る側)
     - opensshがあれば正直なんでもいい
 
+## 構成
+
+![構成](/images/2020-01-23-component.png)  
+<div>Icons made by <a href="https://www.flaticon.com/authors/smashicons" title="Smashicons">Smashicons</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
+<br>
+公開鍵認証のざっくりとしたおさらい...  
+MacBook(クライアント)の秘密鍵(`id_rsa`)と公開鍵(`id_rsa.pub`)を  
+ラズパイ(サーバー)の鍵リスト(`authorized_keys`)に登録する.  
+秘密鍵と公開鍵は1つのペアになっていて, それぞれ片方からもう片方を作成できないようになっている.  
+また, 秘密鍵と公開鍵を照らし合わせるとペアになっているかどうかを判別できるようになっているので,  
+MacBookからラズパイにSSHする際にはラズパイ側の鍵リストに事前に登録された公開鍵と  
+MacBookが持つ秘密鍵を照らし合わせ, ペアと認められた場合にログインを許可する(認証).  
+
 ## やったこと
+
+- [公開鍵をラズパイ側に登録](#公開鍵をラズパイ側に登録)
+- [パスワード認証を無効化](#パスワード認証を無効化)
 
 ### 公開鍵をラズパイ側に登録
 
