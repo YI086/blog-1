@@ -2,7 +2,7 @@
 title: "AlertmanagerからGmailを使って通知するようにした"
 date: 2020-01-27T22:52:41+09:00
 draft: false
-tags: ["作業ログ", "Prometheus"]
+tags: ["作業ログ", "Raspberry Pi", "Prometheus"]
 ---
 
 ## やばい時には通知する
