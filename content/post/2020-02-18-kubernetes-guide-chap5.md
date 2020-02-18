@@ -1,6 +1,6 @@
 ---
 title: "Kubernetes完全に理解したい 5章"
-date: 2019-12-25T22:10:56+09:00
+date: 2020-02-18T22:10:56+09:00
 draft: true
 tags: ["Kubernetes", "メモ"]
 ---
