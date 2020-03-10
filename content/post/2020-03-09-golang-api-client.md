@@ -1,7 +1,7 @@
 ---
-title: "GoでWikipediaのAPIをたたいた"
-date: 2020-03-08T21:29:36+09:00
-draft: true
+title: "GoでWikipediaのAPIを叩いて記事検索した"
+date: 2020-03-09T21:29:36+09:00
+draft: false
 tags: ["Go", "作業ログ"]
 ---
 
@@ -15,6 +15,28 @@ tags: ["Go", "作業ログ"]
 
 - WikipediaのAPI(Wikimedia API)を叩いてみた
 - Go(golang)でAPIクライアントもどきを作った
+
+作ったクライアントはこんなかんじ.  
+Wikipediaの記事を検索した結果とそのURLが表示できる.  
+```bash
+$ wikipedia -srlimit=5 -lang=en 'cat'
+---------------------------------------------------
+Cat
+https://en.wikipedia.org/?curid=6678
+---------------------------------------------------
+Cat (disambiguation)
+https://en.wikipedia.org/?curid=434590
+---------------------------------------------------
+.cat
+https://en.wikipedia.org/?curid=1978706
+---------------------------------------------------
+Bengal cat
+https://en.wikipedia.org/?curid=63064
+---------------------------------------------------
+Cat Stevens
+https://en.wikipedia.org/?curid=78747
+---------------------------------------------------
+```
 
 ## つかうもの
 - MacBook Pro (Retina, 15-inch, Mid 2015)
@@ -32,17 +54,21 @@ tags: ["Go", "作業ログ"]
 [APIのページ](https://www.mediawiki.org/wiki/API:Main_page/ja)によると,  
 Wikipedia(日本語版)APIのURLは  
 https://ja.wikipedia.org/w/api.php  
+となっている.  
 
 今回は[記事検索API](https://www.mediawiki.org/wiki/API:Search)を使ってみる.  
 記事検索をする場合はクエリパラメータに  
 `action=query`, `list=search`, `srsearch=<検索したい文字列>`を指定して  
 `GET`すればいいみたい.  
-レスポンスボディの形式は`format=json`(JSONの場合)でできるみたい.  
+レスポンスボディの形式は`format=json`(JSONの場合)でできるっぽい.  
 
 例: "猫"で検索する場合  
 GET http://ja.wikipedia.org/w/api.php?format=json&action=query&list=search&srsearch=猫  
 
 試しに`curl`で叩いてみる.  
+デフォルトでは検索結果の上位10件が返ってくる.  
+
+<details><summary>**APIでの検索結果**</summary><div>
 ```bash
 # なんかリダイレクトされるみたいなのでLオプションは必須
 # JSONはjqでいい感じに整形する
@@ -152,9 +178,194 @@ $ curl -sSL 'http://ja.wikipedia.org/w/api.php?action=query&format=json&list=sea
   }
 }
 ```
+</div></details>
 
-[WikipediaのUIで検索した場合](https://ja.wikipedia.org/w/index.php?sort=relevance&search=%E7%8C%AB&title=%E7%89%B9%E5%88%A5:%E6%A4%9C%E7%B4%A2&profile=advanced&fulltext=1&advancedSearch-current=%7B%7D&ns0=1)と同じような結果が得られる.  
+[WikipediaのUIで検索した場合](https://ja.wikipedia.org/w/index.php?sort=relevance&search=%E7%8C%AB&title=%E7%89%B9%E5%88%A5:%E6%A4%9C%E7%B4%A2&profile=advanced&fulltext=1&advancedSearch-current=%7B%7D&ns0=1)と同じような結果が得られることがわかる.  
 いい感じ.  
 これでAPIの動作確認は完了.  
 
 ### GoでAPIをたたく
+このままシェルスクリプト化しても便利だと思うんだけど,  
+今回は`Go`の練習としてAPIクライアントっぽく作ってみる.  
+
+<details><summary>`main.go`</summary><div>
+```go
+package main
+
+import (
+	"encoding/json"
+	"flag"
+	"fmt"
+	"io/ioutil"
+	"log"
+	"net/http"
+	"net/url"
+	"os"
+)
+
+// JSONをパースするための構造体を定義
+type WikipediaResponse struct {
+	Query Query `json:"query"`
+}
+
+type Query struct {
+	SearchInfo SearchInfo `json:"searchinfo"`
+	Search     []Search   `json:"search"`
+}
+
+type SearchInfo struct {
+	Totalhits int `json:"totalhits"`
+}
+
+type Search struct {
+	Title  string `json:"title"`
+	PageId int    `json:"pageid"`
+	// Snippet string `json:"snippet"`
+}
+
+func main() {
+	// 引数チェック
+	var language = flag.String("lang", "ja", "検索するwikiの言語. default: ja")
+	var srlimit = flag.Int("srlimit", 10, "検索件数. default: 10")
+	flag.Parse()
+	if flag.NArg() != 1 {
+		fmt.Println("検索ワードを指定してください")
+		os.Exit(1)
+	}
+	if flag.NFlag() > 2 {
+		fmt.Println("言語以外のフラグは無効です")
+		os.Exit(1)
+	}
+	arg := flag.Arg(0)
+
+	// APIを叩くためのURL作成
+	baseUrl := url.URL{}
+	baseUrl.Scheme = "http"
+	baseUrl.Host = fmt.Sprintf("%s.wikipedia.org", *language)
+	baseUrl.Path = "w/api.php"
+	query := baseUrl.Query()
+	query.Set("action", "query")
+	query.Set("list", "search")
+	query.Set("srsearch", arg)
+	query.Set("srlimit", fmt.Sprintf("%d", *srlimit))
+	query.Set("format", "json")
+	baseUrl.RawQuery = query.Encode()
+
+	// 記事検索APIを叩く
+	resp, err := http.Get(baseUrl.String())
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer resp.Body.Close()
+
+	// レスポンスをパースする
+	body, err := ioutil.ReadAll(resp.Body)
+	wikipediaResponse := new(WikipediaResponse)
+	err = json.Unmarshal(body, wikipediaResponse)
+
+	// ヒットした記事が0件の場合は終了
+	if wikipediaResponse.Query.SearchInfo.Totalhits <= 0 {
+		fmt.Println("記事が見つかりませんでした。")
+		os.Exit(1)
+	}
+
+	// 記事タイトルとURLを表示
+	for _, v := range wikipediaResponse.Query.Search {
+		fmt.Println("---------------------------------------------------")
+		fmt.Println(v.Title)
+		fmt.Printf("https://%s.wikipedia.org/?curid=%d\n", *language, v.PageId)
+	}
+	fmt.Println("---------------------------------------------------")
+
+}
+```
+</div></details>
+
+やったこととしては  
+
+- 引数でのクエリパラメータとオプションの受け付け
+- リクエストURLの組み立てとAPIへのHTTPリクエストの実行
+- レスポンス(JSON)のパース
+- 必要な情報の表示
+
+だけ.  
+特に難しかったのはAPIを叩く部分とレスポンスのパース部分.  
+
+APIを叩く部分については[`net/url`](https://golang.org/pkg/net/url/)を使ってURLを組み立てて,  
+[`net/http`](https://golang.org/pkg/net/http/)を使ってリクエストを投げるようにした.  
+基本的にはcurlで叩いたときと同じリクエストを送るようにした.  
+
+公式パッケージ[`encoding/json`](https://golang.org/pkg/encoding/json/)を使ったJSONのパースは結構面倒で,  
+事前にJSONの構造を構造体として定義してやる必要がある.  
+APIのレスポンスはJSONが結構入れ子になっているので書くのが大変だった.  
+
+また, 今回はレスポンスのJSONから記事タイトルとidだけ抜き出して,  
+https://ja.wikipedia.org/?curid=1215264 の形式にすることでページへのリンクを作成するようにした.  
+
+実際に使ってみるとこんな感じ.  
+
+```bash
+# ビルドする
+$ ls
+go.mod  main.go
+$ go build -o $GOPATH/bin/wikipedia .
+
+# GOPATHがPATHに入っていればwikipediaコマンドを呼び出せる
+$ wikipedia '猫'
+---------------------------------------------------
+ネコ
+https://ja.wikipedia.org/?curid=1215264
+---------------------------------------------------
+三毛猫ホームズシリーズ
+https://ja.wikipedia.org/?curid=227387
+---------------------------------------------------
+1905年
+https://ja.wikipedia.org/?curid=2506
+---------------------------------------------------
+吾輩は猫である
+https://ja.wikipedia.org/?curid=13241
+---------------------------------------------------
+猫騙し
+https://ja.wikipedia.org/?curid=229647
+---------------------------------------------------
+クイズRPG 魔法使いと黒猫のウィズ
+https://ja.wikipedia.org/?curid=2969296
+---------------------------------------------------
+長靴猫シリーズ
+https://ja.wikipedia.org/?curid=2623926
+---------------------------------------------------
+三味線
+https://ja.wikipedia.org/?curid=19199
+---------------------------------------------------
+グーグーだって猫である
+https://ja.wikipedia.org/?curid=1181328
+---------------------------------------------------
+迷い猫オーバーラン!
+https://ja.wikipedia.org/?curid=1727982
+---------------------------------------------------
+
+# 実行時引数でオプションを変えられる
+$ wikipedia -lang=en -srlimit=3 'イチロー'
+---------------------------------------------------
+Ichirō
+https://en.wikipedia.org/?curid=1067866
+---------------------------------------------------
+Orix Buffaloes
+https://en.wikipedia.org/?curid=1145207
+---------------------------------------------------
+Ichiro Suzuki
+https://en.wikipedia.org/?curid=66417
+---------------------------------------------------
+```
+なんかそれっぽいのが作れた.  
+やったぜ.  
+
+つくったやつはここ.  
+https://github.com/uzimihsr/wikipedia-search  
+
+APIクライアントはこんな感じで一度作ってしまえば他にもいろいろできそう.  
+時間があれば他のAPIにも対応させてwikipedia用のコマンドラインツールみたいなのを作っても面白いかもしれない(需要はなさそう).  
+
+## おまけ
+のび〜をするねこ  
+![ストレッチそとちゃん](/images/2020-03-09-sotochan.jpg)  
