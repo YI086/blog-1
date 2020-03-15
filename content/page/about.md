@@ -4,17 +4,18 @@ title: About us
 comments: false
 ---
 
-### ぼく
-猫と2人暮らしのエンジニア, すなわち **エンジにゃー** .  
+### uzimihsr
+猫と2人暮らしのエンジニア(**エンジにゃー**).  
 クソ雑魚エンジニアなので絶賛勉強中.  
-[Twitter](https://twitter.com/uzimihsr)
-
+好きなもの : 猫, ラーメン二郎, 野球, サウナ  
+興味があるもの : Docker, Kubernetes, Go(golang)  
+[Twitter](https://twitter.com/uzimihsr)  
 
 ### 猫
 そとちゃん 雑種 推定3さい 女の子  
-すき : にぼしのおやつ, ひなたぼっこ, 羽根がついたおもちゃ, またたび  
+すき : にぼしのおやつ, ひなたぼっこ, 羽根のついたおもちゃ, ただのひも, またたび  
 きらい : おふろ, ブラッシング  
 せいかく : ツンデレ  
-とくちょう : 遊び方がはげしい, なんでも噛む, かわいい  
+とくちょう : あそび方がはげしい, よくしゃべる, かわいい  
 ![かわいい写真](/images/sotochan_kawaii.jpg)  
 [最高にかわいいインスタ](https://www.instagram.com/uzimihsr/)  
