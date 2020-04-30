@@ -25,6 +25,7 @@ tags: ["Kubernetes", "メモ"]
   - [ClusterIP Service](#clusterip-service)
   - [ExternalIP Service](#externalip-service)
   - [NodePort Service](#nodeport-service)
+- [Ingress](#ingress)
 
 ### Service
 `Pod`へのトラフィックの負荷分散とサービスディスカバリを行うリソース.  
@@ -590,3 +591,75 @@ pod "testpod" deleted
 [sample-none-selector.yaml](https://github.com/MasayaAoyama/kubernetes-perfect-guide/blob/master/samples/chapter06/sample-none-selector.yaml)(`Endpoints`の`.subnets[].addresses[].ip`は有効な外部のドメインに書き換える)  
 
 ### Ingress
+`Service`とは異なり, L7レベルのロードバランシングを行うリソース.  
+`Ingress`自体の実装方法にもいろいろ種類はあるけど,  
+基本的には自身へのトラフィックをパスに応じた`Service`に転送する.  
+nginxのリバースプロキシみたいな感じ.  
+
+|よく使いそうな設定項目|説明|
+|---|---|
+|`.spec.rules[].host`|仮想ホスト名|
+|`.spec.rules[].http.paths[].path`|トラフィックを振り分けるためのパスを設定|
+|`.spec.rules[].http.paths[].backend.serviceName`|`~.path`へのトラフィックを<br>転送する先の`Service`名を指定|
+|`.spec.rules[].http.paths[].backend.servicePort`|`~.serviceName`の`Service`のポート番号を指定|
+|`.spec.backend.serviceName`|パスを指定されなかった場合にトラフィックを転送する`Service`名を指定|
+|`.spec.backend.servicePort`|パスを指定されなかった場合にトラフィックを転送する`Service`のポート番号を指定|
+
+GKEの場合はクラスタ外のロードバランサーを利用し,  
+そのロードバランサー宛のトラフィックを`Service`に転送する.  
+
+```bash
+# Podとそれに紐づくServiceが存在する状態
+# 各Serviceは自身の8888番へのアクセスを同じsuffixがついたPodに転送する設定
+$ kubectl get all
+NAME                         READY   STATUS    RESTARTS   AGE
+pod/sample-ingress-apps-1    1/1     Running   0          62s
+pod/sample-ingress-apps-2    1/1     Running   0          61s
+pod/sample-ingress-default   1/1     Running   0          60s
+
+NAME                             TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)          AGE
+service/sample-ingress-default   NodePort    10.4.2.125   <none>        8888:32343/TCP   62s
+service/sample-ingress-svc-1     NodePort    10.4.4.202   <none>        8888:30755/TCP   63s
+service/sample-ingress-svc-2     NodePort    10.4.0.222   <none>        8888:31640/TCP   62s
+
+# 各Podへのリクエストに対してPod名を返す設定
+$ kubectl exec -it sample-ingress-apps-1 -- mkdir /usr/share/nginx/html/path1
+$ kubectl exec -it sample-ingress-apps-1 -- /bin/sh -c 'hostname > /usr/share/nginx/html/path1/index.html'
+$ kubectl exec -it sample-ingress-apps-2 -- mkdir /usr/share/nginx/html/path2
+$ kubectl exec -it sample-ingress-apps-2 -- /bin/sh -c 'hostname > /usr/share/nginx/html/path2/index.html'
+$ kubectl exec -it sample-ingress-default -- /bin/sh -c 'hostname > /usr/share/nginx/html/index.html'
+
+# Ingress(sample-ingress)はパスに応じて違うBackend(Service)にトラフィックを分ける設定
+$ kubectl get ingresses
+NAME             HOSTS                ADDRESS         PORTS     AGE
+sample-ingress   sample.example.com   35.190.31.149   80, 443   2d1h
+$ kubectl describe ingress sample-ingress
+Name:             sample-ingress
+Namespace:        default
+Address:          35.190.31.149
+Default backend:  sample-ingress-default:8888 (<none>)
+TLS:
+  tls-sample terminates sample.example.com
+Rules:
+  Host                Path  Backends
+  ----                ----  --------
+  sample.example.com
+                      /path1/*   sample-ingress-svc-1:8888 (<none>)
+                      /path2/*   sample-ingress-svc-2:8888 (<none>)
+Annotations:
+  ...
+
+Events:
+  ...
+
+# Ingress宛にリクエストするとパスに応じて異なるServiceからそれぞれのPodにルーティングされる
+$ curl http://35.190.31.149/index.html -H "Host: sample.example.com"
+sample-ingress-default
+$ curl http://35.190.31.149/path1/index.html -H "Host: sample.example.com"
+sample-ingress-apps-1
+$ curl http://35.190.31.149/path2/index.html -H "Host: sample.example.com"
+sample-ingress-apps-2
+```
+
+[sample-ingress-apps.yaml](https://github.com/MasayaAoyama/kubernetes-perfect-guide/blob/master/samples/chapter06/sample-ingress-apps.yaml)  
+[sample-ingress.yaml](https://github.com/MasayaAoyama/kubernetes-perfect-guide/blob/master/samples/chapter06/sample-ingress.yaml)  
