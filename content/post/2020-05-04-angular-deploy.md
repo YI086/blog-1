@@ -362,5 +362,6 @@ commitとpushも自動でやってくれてるっぽい.
     - http://nginx.org/en/docs/beginners_guide.html#static
 - GitHub Pagesにデプロイ
     - https://angular.jp/guide/deployment#deploy-to-github-pages
+    - https://help.github.com/en/github/working-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site
     - https://www.npmjs.com/package/angular-cli-ghpages#-quick-start-local-development
     - https://www.npmjs.com/package/angular-cli-ghpages#--base-href
