@@ -1,282 +1,56 @@
 ---
-title: "AngularアプリをnginxとGitHub Pagesにデプロイ"
-date: 2020-05-04T10:43:39+09:00
+title: "AngularアプリをnginxとGitHub Pagesでデプロイする"
+date: 2020-05-04T15:43:39+09:00
 draft: true
-tags: ["作業ログ", "Angular", "JavaScript", "Node.js"]
+tags: ["作業ログ", "Angular", "nginx", "GitHub Pages"]
 ---
 
-## フロントエンド開発したい
-GWだけど特に遊ぶ予定もないので普段あまりやらないフロントエンドの開発をやってみようと思った.  
+## 成果物をデプロイする
+[前回](https://uzimihsr.github.io/post/2020-05-03-angular-setup/)の続き.  
+Angularの入門をやってみたので, その成果物をデプロイした.  
 
 <!--more-->
 ---
 
 ## やったことのまとめ
 
-- `anyenv`と`nodenv`で`Node.js`の環境構築をした
-- `Angular CLI`をインストールした
-- エディタのセットアップをした
-- `Angular`アプリを`GitHub Pages`で公開した
+- 作成済みの`Angular`アプリを持ってきてローカルでビルドした
+- ビルドしたアプリを`nginx`で公開した
+- アプリを`GitHub Pages`で公開した
+- `angular-cli-ghpages`を利用したデプロイを試した
 
 ## つかうもの
 
 - macOS Mojave 10.14
-    - Go, Docker, Kubernetesはこちらで実行
-- anyenv
-    - https://github.com/anyenv/anyenv
-    - anyenv 1.1.1
-    - インストール済み
-- nodenv
-    - https://github.com/nodenv/nodenv
-    - nodenv 1.3.2+2.2578d8d
+    - [環境構築済み](https://uzimihsr.github.io/post/2020-05-03-angular-setup/)
+- Angular CLI
+    - https://cli.angular.io/
+    - バージョン: 9.1.4
+    - [インストール済み](https://uzimihsr.github.io/post/2020-05-03-angular-setup/)
+- nginx
+    - https://www.nginx.com/
+    - nginx/1.17.8
+    - brewでインストール済み
+- angular-cli-ghpages
+    - https://www.npmjs.com/package/angular-cli-ghpages
+    - "version": "0.6.2"
     - **今回入れる**
+- GitHubのリポジトリ
+    - https://github.com/uzimihsr/angular-first-app
+    - **今回作成する**
 
 ## やったこと
 
-- [Node.jsのインストール](#nodejsのインストール)
-- [Angular CLIのインストール](#angular-cliのインストール)
-- [VSCodeのインストール](#vscodeのインストール)
-- [デプロイ](#デプロイ)
-    - [nginxにデプロイ](#nginxにデプロイ)
-    - [GitHub Pagesにデプロイ](#github-pagesにデプロイ)
+- [Angularアプリのビルド](#angularアプリのビルド)
+- [nginxでデプロイ](#nginxでデプロイ)
+- [GitHub Pagesでデプロイ](#github-pagesでデプロイ)
+    - [手動でやる場合](#手動でやる場合)
+    - [パッケージを利用する場合](#パッケージを利用する場合)
 
-### Node.jsのインストール
+### Angularアプリのビルド
 
-`nodenv`は`Node.js`のバージョン管理をやってくれるやつ.  
-これがなくても困らないけど, 入れておくとバージョン更新でトラブったときとかに多分便利.  
-
-まずは`anyenv`で`nodenv`をインストールしてみる.  
-めちゃくちゃかんたん. `anyenv`神.  
-
-```bash
-# anyenvでインストールできる**envの確認
-$ anyenv install -l | grep nodenv
-  nodenv
-
-# nodenvのインストール
-$ anyenv install nodenv
-...
-Install nodenv succeeded!
-Please reload your profile (exec $SHELL -l) or open a new session.
-$ exec $SHELL -l
-
-# 動作確認
-$ nodenv
-nodenv 1.3.2+2.2578d8d
-Usage: nodenv <command> [<args>]
-
-Some useful nodenv commands are:
-   commands    List all available nodenv commands
-   local       Set or show the local application-specific Node version
-   global      Set or show the global Node version
-   shell       Set or show the shell-specific Node version
-   install     Install a Node version using node-build
-   uninstall   Uninstall a specific Node version
-   rehash      Rehash nodenv shims (run this after installing executables)
-   version     Show the current Node version and its origin
-   versions    List installed Node versions
-   which       Display the full path to an executable
-   whence      List all Node versions that contain the given executable
-
-See 'nodenv help <command>' for information on a specific command.
-For full documentation, see: https://github.com/nodenv/nodenv#readme
-```
-
-`nodenv`がインストールできたので, 今度はこれを使って`Node.js`をインストールする.  
-`Node.js`はとんでもない数のバージョンがあるんだけど,  
-初心者でよくわかんないので[公式](https://nodejs.org/ja/)で現在(2020年5月4日)推奨版とされている **12.16.3** を入れる.  
-
-```bash
-# nodenvでインストール可能できるバージョンの一覧を確認
-$ nodenv install -l | grep -e "^12.*$"
-12.0.0
-12.x-dev
-12.x-next
-12.1.0
-12.2.0
-12.3.0
-12.3.1
-12.4.0
-12.5.0
-12.6.0
-12.7.0
-12.8.0
-12.8.1
-12.9.0
-12.9.1
-12.10.0
-12.11.0
-12.11.1
-12.12.0
-12.13.0
-12.13.1
-12.14.0
-12.14.1
-12.15.0
-12.16.0
-12.16.1
-12.16.2
-12.16.3
-
-# Node.js 12.16.3をインストール
-$ nodenv install 12.16.3
-...
-nodenv: default-packages file not found
-
-# なんか怒られたので対処する
-# nodenv installしたときに自動で入れるパッケージを指定するファイルが必要らしいので空ファイルを作る
-$ touch $(nodenv root)/default-packages
-
-# 再度インストール
-$ nodenv install 12.16.3
-...
-Installed node-v12.16.3-darwin-x64 to /Users/uzimihsr/.anyenv/envs/nodenv/versions/12.16.3
-
-Installed default packages for 12.16.3
-
-# インストール済みのバージョンを確認し使用するバージョンを指定
-$ nodenv versions
-  12.16.3
-$ nodenv global 12.16.3
-$ nodenv versions
-* 12.16.3 (set by /Users/uzimihsr/.anyenv/envs/nodenv/version)
-
-# 動作確認
-$ exec $SHELL -l
-$ node -v
-v12.16.3
-$ npm -v
-6.14.4
-```
-
-以上で`Node.js`のインストールは完了.  
-めっちゃ簡単だった. `nodenv`も神.  
-
-ついでに入ってる`npm`は`Node.js`のパッケージ管理ツールで,  
-`python`でいう`pip`みたいなやつ.  
-(そういえば最近全然`python`触ってないな...)  
-
-### Angular CLIのインストール
-
-続いて`Angular`の開発をするために`npm`を使ってCLIをインストールする.  
-無くても開発はできるみたいだけど, 入れない理由はない.  
-
-```bash
-# Angular CLIのインストール
-$ npm install -g @angular/cli
-...
-/Users/uzimihsr/.anyenv/envs/nodenv/versions/12.16.3/bin/ng -> /Users/uzimihsr/.anyenv/envs/nodenv/versions/12.16.3/lib/node_modules/@angular/cli/bin/ng
-
-> @angular/cli@9.1.4 postinstall /Users/uzimihsr/.anyenv/envs/nodenv/versions/12.16.3/lib/node_modules/@angular/cli
-> node ./bin/postinstall/script.js
-
-...
-+ @angular/cli@9.1.4
-added 271 packages from 206 contributors in 24.329s
-
-# 動作確認
-$ exec $SHELL -l
-$ ng version
-
-...
-
-Angular CLI: 9.1.4
-Node: 12.16.3
-OS: darwin x64
-
-Angular:
-...
-Ivy Workspace:
-
-Package                      Version
-------------------------------------------------------
-@angular-devkit/architect    0.901.4
-@angular-devkit/core         9.1.4
-@angular-devkit/schematics   9.1.4
-@schematics/angular          9.1.4
-@schematics/update           0.901.4
-rxjs                         6.5.4
-```
-
-CLIがインストールできたので, 実際に`Angular`アプリを動かしてみる.  
-CLIは`ng`で呼び出せる.  
-
-```bash
-# 適当なディレクトリで作業
-$ cd workspace
-
-# 新規ワークスペースとサンプルアプリを作成
-# パッケージをいくつか入れるので時間がかかる
-$ ng new my-app
-? Would you like to add Angular routing? Yes
-? Which stylesheet format would you like to use? CSS
-CREATE my-app/README.md (1022 bytes)
-...
-✔ Packages installed successfully.
-    Successfully initialized git.
-
-# 作成されたディレクトリでアプリを起動する
-$ cd my-app
-$ ng serve
-...
-** Angular Live Development Server is listening on localhost:4200, open your browser on http://localhost:4200/ **
-: Compiled successfully.
-# 動作確認が終わったらCtrl+Cで終了
-```
-
-ブラウザで **http://localhost:4200/** を開く.  
-サンプルアプリが起動していることが確認できる.  
-
-![Chrome](/images/2020-05-04/sc01.png)  
-
-これで`Angular`のアプリを動かせるようになった.  
-やったぜ.  
-
-### VSCodeのインストール
-
-普段開発用のエディタは[Atom](https://atom.io/)を使ってるんだけど,  
-`Angular`向けの良いパッケージが見つからなかったので[Visual Studio Code](https://code.visualstudio.com/)(`VSCode`)を使ってみる.  
-
-ホントは`Atom`で頑張りたかったんだけど  
-[公式のIDEリスト](https://angular.io/resources?category=development)でも推奨されてるし,  
-チュートリアルとかで使ってる[StackBlitz](https://stackblitz.com/)も`VSCode`っぽいIDEなので逆らえなかった.  
-
-普通に[公式のダウンロードページ](https://code.visualstudio.com/Download)から落としてくる.  
-勝手に展開されるので, **Visual Studio Code.app** を **/Applications** に移動する.  
-
-![Applications](/images/2020-05-04/sc02.png)  
-
-とは言っても毎回アプリを探して起動するのは不便なので`PATH`を通してコマンドラインから起動できるようにする.  
-実際に起動し, `F1`でコマンドパレットを開き`Install 'code' command in PATH`を選択する.  
-
-![VSCode](/images/2020-05-04/sc03.png)  
-
-画面右下に`Shell command 'code' successfully installed in PATH.`と表示されれば設定は完了.  
-
-試しに先程作成したワークスペースをコマンドラインから開いてみる.  
-
-```bash
-$ cd my-app
-
-# VSCodeでカレントディレクトリを開く
-$ code .
-```
-
-![VSCode](/images/2020-05-04/sc04.png)  
-
-さらに`Angular`を扱いやすくするために[公式のExtention](https://marketplace.visualstudio.com/items?itemName=Angular.ng-template)を入れておく.  
-`Atom`でいうパッケージみたいな拡張機能を`VSCode`では`Extentions`と呼ぶらしい.  
-
-![VSCode](/images/2020-05-04/sc05.png)  
-
-これでエディタのセットアップも完了.  
-
-### デプロイ
-
-開発環境のセットアップができたので, 試しにアプリのデプロイをやってみる.  
-
-`Angular`公式の[入門](https://angular.jp/start)で作ったアプリがダウンロードできたので,  
-これを試しにビルド, デプロイしてみる.  
+`Angular`公式の[入門](https://angular.jp/start)で[StackBlitz](https://stackblitz.com/angular/odpeknvxnlq)上で作ったアプリがダウンロードできるようになっているので,  
+これを試しにビルドしてみる.  
 
 サンプルアプリを作ったときと同じように, 新たにワークスペースを作成する.  
 今回はサンプルアプリは作らず空のワークスペースを作ってみる.  
@@ -295,7 +69,7 @@ README.md         angular.json      node_modules      package-lock.json package.
 ```bash
 # 入門で作ったプロジェクトをコピー
 $ cd angular-first-app
-$ cp -rf ~/Downloads/<プロジェクト名>.angular/* ./
+$ cp -rf ~/Downloads/<プロジェクトID>.angular/* ./
 
 # そのまま起動すると依存関係が足りなくて失敗する
 $ ng serve
@@ -313,11 +87,11 @@ $ ng serve
 # 動作確認ができたらCtrl+Cで終了する
 ```
 
-ブラウザで **http://localhost:4200/** を開くと[入門でつくったもの](https://odpeknvxnlq.angular.stackblitz.io)と同じアプリが起動していることが確認できる.  
+ブラウザで **http://localhost:4200/** を開くと[入門](https://angular.jp/start)でつくったものと同じアプリが起動していることが確認できる.  
 
-![Chrome](/images/2020-05-04/sc06.png)  
+![Chrome](/images/2020-05-04/sc01.png)  
 
-#### nginxにデプロイ
+
 これでアプリの動作確認はできたので, 実際にビルドしてみる.  
 ビルドが成功すると成果物として **dist** ディレクトリが作成されていることがわかる.  
 
@@ -346,8 +120,11 @@ assets                                   main-es5.6d0587fd878af4417329.js       
 index.html                               polyfills-es2015.f8d7ae8b8a28c567fae7.js runtime-es5.1eba213af0b233498d9d.js
 ```
 
-ビルドした成果物は`nginx`にデプロイできる.  
-作成された **dist** ディレクトリをドキュメントルートに設定するだけ. かんたん.  
+`Angular`アプリをデプロイするときはこの **dist/index.html** をwebサーバーで公開すれば良いらしい.  
+
+### nginxでデプロイ
+まずはビルドした成果物を`nginx`で公開してみる.  
+必要な作業は作成された **dist** ディレクトリをドキュメントルートに設定するだけ. かんたん.  
 
 ```bash
 # 絶対パスを確認
@@ -402,9 +179,188 @@ http {
 `nginx`が問題なく動いたらブラウザで **http://localhost:8080/** を開く.  
 `ng serve`したときと同じアプリが動いていることが確認できる.  
 
-![Chrome](/images/2020-05-04/sc07.png)  
+![Chrome](/images/2020-05-04/sc02.png)  
 
 今回はMacの`nginx`だったので手動で止めたけど,  
 本番環境で`nginx`がdaemon化されている場合も同様に`nginx.conf`をいじればアプリがデプロイできる. はず.  
 
-#### GitHub Pagesにデプロイ
+### GitHub Pagesでデプロイ
+
+自分でwebサーバーを管理するのが面倒な場合は`GitHub Pages`を使うこともできる.  
+デプロイ方法は2通り.  
+
+#### 手動でやる場合
+
+まずは`GitHub Pages`の公開に必要なリポジトリ(**angular-first-app**)を[ここ](https://github.com/new)から作成する.  
+`Initialize this repository with a README`のチェックは外しておく.  
+
+今回作ったリポジトリ : https://github.com/uzimihsr/angular-first-app  
+
+このリポジトリにpushしたファイルが`GitHub Pages`として公開されるので,  
+[Angularアプリのビルド](#angularアプリのビルド)で作成したディレクトリ(**angular-first-app**)をこのリポジトリに紐付ける.  
+
+```bash
+# ng new した時点で.gitが作成されているのでinitはたぶん不要
+$ cd angular-first-app
+$ ls -a
+.                  .editorconfig      .gitignore         angular.json       karma.conf.js      package-lock.json  src                tsconfig.json      tslint.json
+..                 .git               README.md          dist               node_modules       package.json       tsconfig.app.json  tsconfig.spec.json
+
+# リポジトリを紐付けて確認
+$ git remote add origin https://github.com/uzimihsr/angular-first-app.git
+$ git remote -v
+origin	https://github.com/uzimihsr/angular-first-app.git (fetch)
+origin	https://github.com/uzimihsr/angular-first-app.git (push)
+
+# 一旦commitしておく
+$ git add .
+$ git commit -m "initial commit"
+```
+
+この状態で`Angular`アプリを`GitHub Pages`用にビルドする.  
+今回は`--output-path`オプションを指定しているのでビルドした成果物が **dist** ではなく別のディレクトリ **docs** に作成される.  
+また, **https://[GitHubアカウント].github.io/[リポジトリ名]/** でアプリにアクセスできるように`--base-href`オプションもつけている.  
+
+```bash
+# ビルド前の状態
+$ ls
+README.md          dist               node_modules       package.json       tsconfig.app.json  tsconfig.spec.json
+angular.json       karma.conf.js      package-lock.json  src                tsconfig.json      tslint.json
+
+# 成果物の出力先とアクセスされるときのパスを指定してビルド
+$ ng build --prod --output-path docs --base-href /angular-first-app/
+Generating ES5 bundles for differential loading...
+ES5 bundle generation complete.
+
+...
+Date: 2020-05-04T05:50:14.401Z - Hash: 19cf3332dd4d450b70af - Time: 19395ms
+
+# ビルド後の状態
+$ ls
+README.md          dist               karma.conf.js      package-lock.json  src                tsconfig.json      tslint.json
+angular.json       docs               node_modules       package.json       tsconfig.app.json  tsconfig.spec.json
+
+# GitHub Pages用に404ページを作成
+$ cp docs/index.html docs/404.html
+```
+
+ここまでできたら, すべての変更を`GitHub`のリポジトリに反映する.  
+
+```bash
+# すべての変更をcommitしてpush
+$ git add .
+$ git commit -m "build"
+$ git push origin master
+```
+
+問題なくpushできたので次に`GitHub Pages`の設定を行う.  
+
+ブラウザで[リポジトリのsettings](https://github.com/uzimihsr/angular-first-app/settings)を開く.  
+`GitHub Pages`の設定で`Source`を`master branch /docs folder`に変更する.  
+これにより **docs** の内容が`GitHub Pages`として公開される.  
+
+![GitHub](/images/2020-05-04/sc03.png)  
+
+設定反映後以下のようになっていればOK.  
+
+![GitHub](/images/2020-05-04/sc04.png)  
+
+ブラウザで **https://uzimihsr.github.io/angular-first-app/** を開くと,  
+`ng serve`したときや`nginx`でデプロイしたときと同じアプリが`GitHub Pages`で公開されているのが確認できる.  
+
+![Chrome](/images/2020-05-04/sc05.png)  
+
+#### パッケージを利用する場合
+
+[angular-cli-ghpages](https://www.npmjs.com/package/angular-cli-ghpages)を使うことで,  
+[手動でやる場合](#手動でやる場合)よりも簡単にデプロイできる.  
+
+最初に1回手動でデプロイしたあとはこっちの方法でデプロイするのがよさそうなので,  
+[手動でやる場合](#手動でやる場合)で作成したリポジトリをそのまま利用する.  
+
+やることとしては`GitHub Pages`にデプロイする用のパッケージ`angular-cli-ghpages`を追加して,  
+`ng deploy`するだけ. かんたん.  
+
+```bash
+# リモートリポジトリの確認
+$ cd angular-first-app
+$ git remote -v
+origin	https://github.com/uzimihsr/angular-first-app.git (fetch)
+origin	https://github.com/uzimihsr/angular-first-app.git (push)
+
+# パッケージを追加
+$ ng add angular-cli-ghpages
+Installing packages for tooling via npm.
+Installed packages for tooling via npm.
+UPDATE angular.json (3753 bytes)
+
+# デプロイ
+$ ng deploy --base-href=/angular-first-app/
+📦 Building "angular.io-example". Configuration: "production". Your base-href: "/angular-first-app/"
+Generating ES5 bundles for differential loading...
+ES5 bundle generation complete.
+
+...
+Date: 2020-05-04T06:45:54.460Z - Hash: 19cf3332dd4d450b70af - Time: 20338ms
+
+
+👨‍🚀 Uploading via git, please wait...
+🚀 Successfully published via angular-cli-ghpages! Have a nice day!
+
+# リモートリポジトリにmasterブランチの他にgh-pagesブランチが作成されている
+$ git branch -a
+* master
+  remotes/origin/gh-pages
+  remotes/origin/master
+```
+
+`ng deploy`が成功するとリポジトリに新しく **gh-pages** ブランチが作成されている.  
+https://github.com/uzimihsr/angular-first-app/tree/gh-pages  
+中身を見ればなんとなくわかるが, [手動でやる場合](#手動でやる場合)でビルドした **docs** の中身と同じものがブランチの直下に作成されている.  
+commitとpushも自動でやってくれてるっぽい.  
+
+![GitHub](/images/2020-05-04/sc06.png)  
+
+この **gh-pages** ブランチを`GitHub Pages`として公開するために再度設定を行う.  
+
+ブラウザで[リポジトリのsettings](https://github.com/uzimihsr/angular-first-app/settings)を開く.  
+`GitHub Pages`の設定で`Source`を`gh-pages branch`に変更する.  
+
+![GitHub](/images/2020-05-04/sc07.png)  
+
+設定反映後以下のようになっていればOK.  
+
+![GitHub](/images/2020-05-04/sc08.png)  
+
+再度ブラウザで **https://uzimihsr.github.io/angular-first-app/** を開くと,  
+これまでと同じアプリが`GitHub Pages`で公開されているのが確認できる.  
+
+![Chrome](/images/2020-05-04/sc05.png)  
+
+これで`GitHub Pages`へのデプロイが簡単になった.  
+やったぜ.  
+
+## おわり
+以上の手順で`Angular`のアプリを`nginx`や`GitHub Pages`に公開することができた.  
+
+基本的にはローカルでつくったものを`ng serve`で動作確認して,  
+問題なければ`ng deploy`で`GitHub Pages`にデプロイ,  
+もしくは`ng build`でビルドしたものを本番環境(`nginx`)にデプロイするという流れで開発ができそう.   
+
+これで一通り開発のやり方もわかったのでフロントエンド開発をがんばっていきたい.  
+
+## おまけ
+寝てる間におもちゃを積まれてうざそうなねこ  
+![そとちゃん](/images/2020-05-04/sotochan.jpg)  
+
+## 参考
+
+- Angularアプリのビルド
+    - https://angular.jp/start/start-deployment
+    - https://angular.jp/guide/build
+- nginxでデプロイ
+    - http://nginx.org/en/docs/beginners_guide.html#static
+- GitHub Pagesにデプロイ
+    - https://angular.jp/guide/deployment#deploy-to-github-pages
+    - https://www.npmjs.com/package/angular-cli-ghpages#-quick-start-local-development
+    - https://www.npmjs.com/package/angular-cli-ghpages#--base-href
