@@ -16,7 +16,7 @@ GWだけど特に遊ぶ予定もないので普段あまりやらないフロン
 
 - `anyenv`と`nodenv`で`Node.js`の環境構築をした
 - `Angular CLI`をインストールした
-- `VSCode`をインストールして`Extention`を入れた
+- `VSCode`をインストールして`Extension`を入れた
 
 ## つかうもの
 
@@ -268,8 +268,8 @@ $ code .
 
 ![VSCode](/images/2020-05-03/sc04.png)  
 
-さらに`Angular`を扱いやすくするために[公式のExtention](https://marketplace.visualstudio.com/items?itemName=Angular.ng-template)を入れておく.  
-`Atom`でいうパッケージみたいな拡張機能を`VSCode`では`Extentions`と呼ぶらしい.  
+さらに`Angular`を扱いやすくするために[公式のExtension](https://marketplace.visualstudio.com/items?itemName=Angular.ng-template)を入れておく.  
+`Atom`でいうパッケージみたいな拡張機能を`VSCode`では`Extension`と呼ぶらしい.  
 メニューから検索すればすぐ見つかるので`Install`を押せば入る.  
 
 ![VSCode](/images/2020-05-03/sc05.png)  
