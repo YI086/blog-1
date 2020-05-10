@@ -1,7 +1,7 @@
 ---
 title: "Kubernetes完全に理解したい 6章"
-date: 2020-03-04T22:18:07+09:00
-draft: true
+date: 2020-05-10T10:17:07+09:00
+draft: false
 tags: ["Kubernetes", "メモ"]
 ---
 
@@ -25,6 +25,10 @@ tags: ["Kubernetes", "メモ"]
   - [ClusterIP Service](#clusterip-service)
   - [ExternalIP Service](#externalip-service)
   - [NodePort Service](#nodeport-service)
+  - [LoadBalancer Service](#loadBalancer-service)
+  - [Headless Service](#headless-service)
+  - [ExternalName Service](#externalName-service)
+  - [None-Selector Service](#none-selector-service)
 - [Ingress](#ingress)
 
 ### Service
@@ -663,3 +667,7 @@ sample-ingress-apps-2
 
 [sample-ingress-apps.yaml](https://github.com/MasayaAoyama/kubernetes-perfect-guide/blob/master/samples/chapter06/sample-ingress-apps.yaml)  
 [sample-ingress.yaml](https://github.com/MasayaAoyama/kubernetes-perfect-guide/blob/master/samples/chapter06/sample-ingress.yaml)  
+
+## おまけ
+キメ顔ねこ  
+![そとちゃん](/images/2020-05-10/sotochan.jpg)  
