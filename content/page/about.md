@@ -8,11 +8,11 @@ comments: false
 猫と2人暮らしのエンジニア(**エンジにゃー**).  
 クソ雑魚エンジニアなので絶賛勉強中.  
 好きなもの : 猫, ラーメン二郎, 野球, サウナ  
-興味があるもの : Docker, Kubernetes, Go(golang)  
+興味があるもの : Docker, Kubernetes, Go(golang), Prometheus  
 [Twitter](https://twitter.com/uzimihsr)  
 
 ### 猫
-そとちゃん 雑種 推定3さい 女の子  
+そとちゃん 雑種 たぶん4さい 女の子  
 すき : にぼしのおやつ, ひなたぼっこ, 羽根のついたおもちゃ, ただのひも, またたび  
 きらい : おふろ, ブラッシング  
 せいかく : ツンデレ  
