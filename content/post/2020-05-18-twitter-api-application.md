@@ -5,7 +5,7 @@ draft: false
 tags: ["作業ログ", "Twitter", "Ruby"]
 ---
 
-## API使ってみたい
+## APIからツイートしたい
 TwitterのAPIをつかってちょっと遊んでみたくなったのでやってみた.  
 
 <!--more-->
