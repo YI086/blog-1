@@ -35,6 +35,8 @@ $ curl -X GET "localhost:8080/cheat?faces=100&number=99"
 
 ## つかうもの
 - macOS Mojave 10.14
+- [anyenv](https://github.com/anyenv/anyenv) 1.1.1
+  - インストール済み
 - [goenv](https://github.com/syndbg/goenv) 2.0.0beta11
   - インストール済み
 - [go](https://github.com/golang/go) version go1.14.6 darwin/amd64
@@ -334,5 +336,6 @@ Web APIっぽいものを0から作ってみた. けっこうしんどかった.
 
 ## 参考にしたもの
 
+- https://github.com/golang/go/wiki/Modules#example
 - [Goプログラミング実践入門 標準ライブラリでゼロからWebアプリを作る](https://book.impress.co.jp/books/1115101145)
 - https://github.com/golang/mock/blob/master/README.md
