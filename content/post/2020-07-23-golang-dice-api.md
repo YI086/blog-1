@@ -6,7 +6,7 @@ tags: ["Go", "作業ログ"]
 ---
 
 ## Web APIつくってみる
-Web APIを書いたことがなかったのでGoの練習がてら作ってみた.  
+Web APIを自分で最初から作ったことがなかったので, Goの練習も兼ねてやってみた.  
 
 <!--more-->
 ---
@@ -287,10 +287,13 @@ $ vim handler_test.go
 
 {{< highlight bash >}}
 $ cd ..
+# diceパッケージのテスト
 $ go test -cover ./dice
 ok  	github.com/uzimihsr/dice-api/dice	0.006s	coverage: 100.0% of statements
+# handlerパッケージのテスト
 $ go test -cover ./handler
 ok  	github.com/uzimihsr/dice-api/handler	0.016s	coverage: 100.0% of statements
+# 全部まとめてテスト
 $ go test -cover ./...
 ?   	github.com/uzimihsr/dice-api	[no test files]
 ok  	github.com/uzimihsr/dice-api/dice	(cached)	coverage: 100.0% of statements
@@ -300,7 +303,7 @@ ok  	github.com/uzimihsr/dice-api/handler	(cached)	coverage: 100.0% of statement
 
 これでテストも(一応)できた.  
 
-最終的な構成はこんなかんじ.  
+最終的なディレクトリの構成はこんなかんじ.  
 テストを実行したのでパッケージの依存関係を管理するためのファイル`go.mod`と`go.sum`が修正/追加されている.  
 こいつらも一緒に`Git`で管理しておくと, 別の環境でこれをビルドするときに便利だったりする. らしい.  
 
@@ -323,10 +326,10 @@ $ tree .
 3 directories, 9 files
 {{< /highlight >}}
 
-最終的なリポジトリは[こんなかんじ](https://github.com/uzimihsr/dice-api/tree/282fcd393116e87fa43277b3f3f97d0e68261de3).  
+最終的なリポジトリは[こんなかんじ](https://github.com/uzimihsr/dice-api/tree/07e945bed60205b936e9ca3511cf1dafe8881ab8).  
 
 ## おわり
-Web APIっぽいものを0から作ってみた. けっこうしんどかった.  
+Web APIっぽいものを0から作ってみた. テストまでやったのでけっこうしんどかった.  
 あとは[ビルド](https://uzimihsr.github.io/post/2020-03-15-golang-build-image/)すれば普通に動くはずなので,  
 暇があったら`Kubernetes`で動かすところまでやってみたい.  
 
