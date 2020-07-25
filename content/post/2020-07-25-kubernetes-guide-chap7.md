@@ -1,11 +1,11 @@
 ---
 title: "Kubernetes完全に理解したい 7章"
-date: 2020-06-27T21:57:31+09:00
-draft: true
+date: 2020-07-25T17:57:31+09:00
+draft: false
 tags: ["Kubernetes", "メモ"]
 ---
 
-## ServiceとかIngressとか
+## ConfigMapとかSecretとか
 
 [Kubernetes完全ガイド](https://book.impress.co.jp/books/1118101055)の続き.  
 ConfigMapとかSecretとか, Podから利用できるリソースの話.  
@@ -24,6 +24,8 @@ ConfigMapとかSecretとか, Podから利用できるリソースの話.
 - [ConfigMap](#configmap)
 - [Secret](#secret)
 - [Volume](#volume)
+- [PersistentVolume](#persistentvolume)
+- [PersistentVolumeClaim](#persistentvolumeclaim)
 
 ### ConfigMap
 
@@ -419,3 +421,101 @@ sample-projected
 [sample-projected.yaml](https://github.com/MasayaAoyama/kubernetes-perfect-guide/blob/master/samples/chapter07/sample-projected.yaml)  
 
 ### PersistentVolume
+
+永続化領域を扱うための`Volume`で, 個別のリソースとして扱う.  
+ネットワーク経由で`Pod`等から利用するため, アクセス可能な場所にディスクを用意する必要がある.  
+(`Ingress`みたいな感じ?)  
+
+{{< highlight bash >}}
+# GCPでディスクを作成
+$ gcloud compute disks create --size=10GB sample-gce-pv --zone us-central1-a
+NAME           ZONE           SIZE_GB  TYPE         STATUS
+sample-gce-pv  us-central1-a  10       pd-standard  READY
+
+# PersistentVolume(sample-pv)を作成
+$ kubectl apply -f sample-pv.yaml
+persistentvolume/sample-pv created
+$ kubectl get pv sample-pv
+NAME        CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS      CLAIM   STORAGECLASS   REASON   AGE
+sample-pv   10Gi       RWO            Retain           Available           manual                  56s
+{{< /highlight >}}
+[sample-pv.yaml](https://github.com/MasayaAoyama/kubernetes-perfect-guide/blob/master/samples/chapter07/sample-pv.yaml)  
+
+### PersistentVolumeClaim
+
+`Pod`等から利用できる`PersistentVolume`を払い出すためのリソース.  
+クラスタが認識している`PersistentVolume`の中で`PersistentVolumeClaim`の条件に合ったものが`Pod`に接続される.  
+
+{{< highlight bash >}}
+# PersistentVolume(sample-pv)が存在する状態でPersistentVolumeClaim(sample-pvc)を作成
+$ kubectl apply -f sample-pvc.yaml
+persistentvolumeclaim/sample-pvc created
+$ kubectl get pvc sample-pvc
+NAME         STATUS   VOLUME      CAPACITY   ACCESS MODES   STORAGECLASS   AGE
+sample-pvc   Bound    sample-pv   10Gi       RWO            manual         26s
+
+# PersistentVolume(sample-pv)がsample-pvcに確保(Bound)されている
+$ kubectl get pv sample-pv
+NAME        CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM                STORAGECLASS   REASON   AGE
+sample-pv   10Gi       RWO            Retain           Bound    default/sample-pvc   manual                  111s
+
+# Podの/usr/share/nginx/htmlにsample-pvcで払い出されたPersistentVolumeがマウントされている
+$ kubectl get pod sample-pvc-pod -o yaml | yq read - 'spec.volumes[0]'
+name: nginx-pvc
+persistentVolumeClaim:
+  claimName: sample-pvc
+$ kubectl get pod sample-pvc-pod -o yaml | yq read - 'spec.containers[0].volumeMounts[0]'
+mountPath: /usr/share/nginx/html
+name: nginx-pvc
+{{< /highlight >}}
+[sample-pvc.yaml](https://github.com/MasayaAoyama/kubernetes-perfect-guide/blob/master/samples/chapter07/sample-pvc.yaml)
+[sample-pvc-pod.yaml](https://github.com/MasayaAoyama/kubernetes-perfect-guide/blob/master/samples/chapter07/sample-pvc-pod.yaml)
+
+また, `StorageClass`の設定によっては,  
+事前に`PersistentVolume`を用意しなくても`PersistentVolumeClaim`に応じた`PersistentVolume`を自動で払い出すことができる(`Dynamic Provisioning`).  
+
+{{< highlight bash >}}
+# GKEのデフォルトStorageClass
+$ kubectl describe sc standard
+Name:                  standard
+IsDefaultClass:        Yes
+Annotations:           storageclass.kubernetes.io/is-default-class=true
+Provisioner:           kubernetes.io/gce-pd
+Parameters:            type=pd-standard
+AllowVolumeExpansion:  True
+MountOptions:          <none>
+ReclaimPolicy:         Delete
+VolumeBindingMode:     Immediate
+Events:                <none>
+
+# PersistentVolumeがない状態でStorageClassを指定しないPersistentVolumeClaimを作成する
+$ kubectl get pv
+No resources found.
+$ kubectl apply -f sample-pvc-default-storageclass.yaml
+persistentvolumeclaim/sample-pvc created
+
+# GCPのディスクとPersistentVolumeが自動で払い出されている
+$ kubectl get pv
+NAME                                       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM                STORAGECLASS   REASON   AGE
+pvc-332c4de9-ce56-11ea-a3f9-42010a80005d   4Gi        RWO            Delete           Bound    default/sample-pvc   standard                69s
+$ gcloud compute disks list
+NAME                                                             LOCATION       LOCATION_SCOPE  SIZE_GB  TYPE         STATUS
+gke-k8s-01-08fea67e-dy-pvc-332c4de9-ce56-11ea-a3f9-42010a80005d  us-central1-a  zone            4        pd-standard  READY
+
+# 使用したPersistentVolumeClaimはsample-pvc.yamlを改変したもの
+$ cat sample-pvc-default-storageclass.yaml
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: sample-pvc
+spec:
+  resources:
+    requests:
+      storage: 4Gi
+  accessModes:
+    - ReadWriteOnce
+{{< /highlight >}}
+
+## おまけ
+謎ポーズをきめるねこ  
+![そとちゃん](/images/2020-07-25/sotochan.jpg)  
