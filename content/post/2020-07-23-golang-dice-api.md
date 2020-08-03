@@ -86,8 +86,8 @@ $ echo $GOPATH
 ![GitHub](/images/2020-07-23/sc01.png)  
 作ったリポジトリ : https://github.com/uzimihsr/dice-api  
 
-作成したリポジトリをローカルにcloneして, `Go Module`とか`.gitignore`の準備をする.  
-`Go Module`の使い方は[公式](https://github.com/golang/go/wiki/Modules#example)を参考にする.  
+作成したリポジトリをローカルにcloneして, `Go Modules`とか`.gitignore`の準備をする.  
+`Go Modules`の使い方は[公式](https://github.com/golang/go/wiki/Modules#example)を参考にする.  
 `.gitignore`は[gitignore.io](https://www.toptal.com/developers/gitignore)を使って作るのが楽.  
 
 {{< highlight bash >}}
