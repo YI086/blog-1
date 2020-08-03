@@ -1,5 +1,5 @@
 ---
-title: "YAMLを使わずにkubectlでサクッとリソースを作る"
+title: "YAMLを使わずにkubectl run/createでサクッとリソースを作る"
 date: 2020-07-29T20:43:33+09:00
 draft: false
 tags: ["メモ", "Kubernetes"]
