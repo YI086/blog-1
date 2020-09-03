@@ -1,5 +1,5 @@
 ---
-title: "cobraでCLIツールを作る"
+title: "cobraでかんたんなCLIツールをつくった"
 date: 2020-09-03T22:10:37+09:00
 draft: false
 tags: ["Go", "作業ログ"]
