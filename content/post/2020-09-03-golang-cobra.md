@@ -1,19 +1,39 @@
 ---
-title: "cobraでCLIを作る"
-date: 2020-08-05T22:10:37+09:00
-draft: true
+title: "cobraでCLIツールを作る"
+date: 2020-09-03T22:10:37+09:00
+draft: false
 tags: ["Go", "作業ログ"]
 ---
 
-## cobraを試す
-GoでCLIを作るときに引数とかサブコマンドをいい感じにしてくれるライブラリのcobraを試した.  
+## Goでコマンドラインツール
+golangでCLIツールを作るときに引数とかサブコマンドをいい感じにしてくれるライブラリのcobraを試した.  
 
 <!--more-->
 ---
 
 ## やったことのまとめ
 
-cobraを使ってあいさつするおもちゃをつくった.  
+`cobra`を使ってコマンドラインであいさつするおもちゃ[greeting](https://github.com/uzimihsr/greeting)をつくった.  
+
+{{< highlight bash >}}
+# hello
+$ greeting hello hoge fuga piyo --message 'Nice to meet you!'
+Hello, hoge, fuga, and piyo!
+Nice to meet you!
+
+# こんにちは
+$ greeting hello 鈴木 --message 'お会いできて嬉しいです!' -l ja
+鈴木さん, こんにちは!
+お会いできて嬉しいです!
+
+# goodbye
+$ greeting goodbye hoge fuga piyo
+Goodbye, hoge, fuga, and piyo!
+
+# さようなら
+$ greeting goodbye A -l ja
+Aさん, さようなら!
+{{< /highlight >}}
 
 ## つかうもの
 - macOS Mojave 10.14
@@ -57,7 +77,7 @@ Use "cobra [command] --help" for more information about a command.
 {{< /highlight >}}
 
 `cobra init`を使うと動く状態のサンプルコードを生成してくれる.[^1]  
-昔は空のディレクトリじゃないとできなかったみたいだけど, 今はファイルが合っても大丈夫.  
+昔は空のディレクトリじゃないとできなかったみたいだけど, 今は気にしなくて大丈夫.  
 
 
 {{< highlight bash >}}
@@ -147,13 +167,98 @@ Global Flags:
 Command.Runのfunc()で実際に行う処理を記述しているので, この形式に従っていろいろいじってみる.  
 
 
+<details><summary>`cmd/root.go(編集後)`</summary><div>
+<script src="https://gist.github.com/uzimihsr/b62f55b5e70a1b924c6576cf6f713b4e.js"></script>
+</div></details>
+<details><summary>`cmd/hello.go(編集後)`</summary><div>
+<script src="https://gist.github.com/uzimihsr/0ee18d3e322b19e86277d98bf7fc1441.js"></script>
+</div></details>
+<details><summary>`cmd/goodbye.go`</summary><div>
+<script src="https://gist.github.com/uzimihsr/a0763f5d1295ed88747c09f54da91606.js"></script>
+</div></details>
+
+最終的なディレクトリ構造はこんな感じ.  
+出会いと別れの挨拶をするサブコマンド`cmd/hello.go`と`cmd/goodbye.go`を実装した.  
+
+{{< highlight bash >}}
+$ tree .
+.
+├── cmd
+│   ├── goodbye.go
+│   ├── hello.go
+│   └── root.go
+├── go.mod
+├── go.sum
+└── main.go
+
+1 directory, 6 files
+{{< /highlight >}}
+
+実際に動かしてみる.  
+`go install`すると`PATH`が通ってすぐ使えるようになるのでべんり.  
+
+{{< highlight bash >}}
+# ビルドして実行
+$ go build
+$ ./greeting hello World
+Hello, World!
+
+# GOPATHが通っている場合はinstallするとパスが通る
+$ go install
+$ which greeting
+$GOPATH/bin/greeting
+
+# -l で言語(en/ja)の指定ができる
+$ greeting goodbye A B -l ja
+Aさん, Bさん, さようなら!
+
+# --message で追加のメッセージを指定できる
+$ greeting hello A B C --message 'Nice to meet you!'
+Hello, A, B, and C!
+Nice to meet you!
+
+# goodbyeには敢えて --message のflagをつけていないので指定するとエラーになる
+$ greeting goodbye A --message 'See you again!'
+Error: unknown flag: --message
+Usage:
+  greeting goodbye [NAME] [flags]
+
+Flags:
+  -h, --help   help for goodbye
+
+Global Flags:
+  -l, --lang string   Language : en, ja (default "en")
+
+unknown flag: --message
+
+# 引数の数が不正でもエラーになる
+$ greeting hello
+Error: requires at least 1 arg(s), only received 0
+Usage:
+  greeting hello [NAME] [flags]
+
+Flags:
+  -h, --help             help for hello
+  -m, --message string   Help message for toggle
+
+Global Flags:
+  -l, --lang string   Language : en, ja (default "en")
+
+requires at least 1 arg(s), only received 0
+{{< /highlight >}}
+
+やったぜ.  
+機能はしょぼいけど, サブコマンドごとに違う機能を持つCLIツールができた.  
 
 ## おわり
-
+`Cobra`を使って簡単なCLIツールを作った.  
+サブコマンドごとに`flag`(オプション)が管理できたり, `Args`で引数の条件を指定できたりするのがいいと思う.  
+今まで`Go`でCLIを作るときは標準パッケージの[flag](https://godoc.org/flag)を使ってたけど,  
+これからは`Cobra`でサクッと作るようにしたい.  
 
 ## おまけ
 ねこのかわいい肉球  
-![そとちゃん](/images/2020-08-05/sotochan.jpg)  
+![そとちゃん](/images/2020-09-03/sotochan.jpg)  
 
 ## 参考
 
