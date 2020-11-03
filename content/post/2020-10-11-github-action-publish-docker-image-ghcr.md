@@ -14,6 +14,7 @@ GitHub公式のCI/CDサービスGitHub Actionsを使って, リポジトリ上�
 ## まとめ
 [GitHub](https://github.com/)のPAT(個人アクセストークン)をリポジトリの`Secrets`に**CR_PAT**として登録した状態で以下のような`.github/workflows/docker-publish.yml`を作成すると,  
 **master**ブランチへのcommitやrelease(tag)の作成時に`Docker image`を`GitHub Action`で`GitHub Container Registry`にpushすることができる.  
+pushした`image` : https://github.com/users/uzimihsr/packages/container/package/echo
 {{< highlight yaml >}}
 # ghcr.io/<GitHubアカウント>/<image名>:<タグ>のimageをGitHub Packagesにpushするworkflow
 name: Docker
