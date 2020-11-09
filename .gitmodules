@@ -1,3 +1,7 @@
 [submodule "themes/beautifulhugo"]
 	path = themes/beautifulhugo
 	url = https://github.com/uzimihsr/beautifulhugo.git
+[submodule "public"]
+	path = public
+	url = https://github.com/uzimihsr/uzimihsr.github.io.git
+	branch = master
